@@ -2,38 +2,53 @@
 
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCoins } from '../redux/slices/coinsSlice';
+import { fetchTrendingCoins } from '../redux/slices/coinsSlice';
 import Link from 'next/link';
 
-const WatchList = () => {
+const TrendingMarket = () => {
   const dispatch = useDispatch();
-  const { coins, status, error } = useSelector((state) => state.coins);
+  const { trendingCoins, trendingStatus, trendingError } = useSelector((state) => state.coins);
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchCoins(1)); // Fetch the first page of coins
+    if (trendingStatus === 'idle') {
+      dispatch(fetchTrendingCoins());
     }
-  }, [status, dispatch]);
+  }, [trendingStatus, dispatch]);
 
-  if (status === 'loading') {
-    return <div>Loading...</div>;
+  if (trendingStatus === 'loading') {
+    return <div className="text-white">Loading trending coins...</div>;
   }
 
-  if (status === 'failed') {
-    return <div>Error: {error}</div>;
+  if (trendingStatus === 'failed') {
+    return <div className="text-red-500">Error: {trendingError}</div>;
   }
 
-  const displayedCoins = showAll ? coins : coins.slice(0, 5);
+  const formatPrice = (price) => {
+    if (typeof price === 'number') {
+      return `$${price.toFixed(8)}`;
+    }
+    return price || 'N/A';
+  };
 
+  const formatPercentage = (changeObj) => {
+    if (changeObj && typeof changeObj.usd === 'number') {
+      return `${changeObj.usd.toFixed(2)}%`;
+    }
+    return 'N/A';
+  };
+
+  const displayedCoins = showAll ? trendingCoins : trendingCoins.slice(0, 5);
+  
   return (
     <div className="p-3 text-xs text-white border-[2px] rounded-lg border-gray-600 bg-gray-950">
-      <h1 className="text-xl font-bold mb-4">Watchlist</h1>
+      <h1 className="text-xl font-bold mb-4">Trending</h1>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="text-gray-500 uppercase leading-normal border-b-[1px] border-gray-800">
               <th className="py-2 px-3 text-left">Token</th>
+              <th className="py-2 px-3 text-left">Symbol</th>
               <th className="py-2 px-3 text-right">Last Price</th>
               <th className="py-2 px-3 text-right">24h Change</th>
               <th className="py-2 px-3 text-right">Market Cap</th>
@@ -44,27 +59,24 @@ const WatchList = () => {
               <tr key={coin.id} className="hover:bg-gray-900 cursor-pointer">
                 <td className="py-2 px-3 text-left whitespace-nowrap">
                   <Link href={`/coin/${coin.id}`} className="flex items-center group">
-                    <img className="w-6 h-6 rounded-full mr-2" src={coin.image} alt={coin.name} />
+                    <img className="w-6 h-6 rounded-full mr-2" src={coin.large} alt={coin.name} />
                     <span className="font-medium text-blue-400 group-hover:text-blue-300">
                       {coin.symbol.toUpperCase()}
                     </span>
                   </Link>
                 </td>
-                <td className="py-2 px-3 text-right">
-                  ${coin.current_price.toLocaleString()}
+                <td className="py-2 px-3 text-left">{coin.symbol}</td>
+                <td className="py-2 px-3 text-right">{formatPrice(coin.data?.price)}</td>
+                <td className={`py-2 px-3 text-right ${coin.data?.price_change_percentage_24h?.usd >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {formatPercentage(coin.data?.price_change_percentage_24h)}
                 </td>
-                <td className={`py-2 px-3 text-right ${coin.price_change_percentage_24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {coin.price_change_percentage_24h.toFixed(2)}%
-                </td>
-                <td className="py-2 px-3 text-right">
-                  ${coin.market_cap.toLocaleString()}
-                </td>
+                <td className="py-2 px-3 text-right">{coin.data?.market_cap || 'N/A'}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      {coins.length > 5 && (
+      {trendingCoins.length > 5 && (
         <div className="text-center mt-2">
           <button
             onClick={() => setShowAll(!showAll)}
@@ -78,4 +90,4 @@ const WatchList = () => {
   );
 };
 
-export default WatchList;
+export default TrendingMarket;

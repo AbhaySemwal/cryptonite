@@ -20,13 +20,43 @@ export const fetchCoinDetails = createAsyncThunk('coins/fetchCoinDetails', async
   return response.data
 })
 
+export const addToRecentlyViewed = createAsyncThunk(
+  'coins/addToRecentlyViewed',
+  async (coin, { getState }) => {
+    const { coins } = getState();
+    let recentlyViewed = [...(coins.recentlyViewed || [])];
+    
+    recentlyViewed = recentlyViewed.filter(c => c.id !== coin.id);
+    
+    recentlyViewed.unshift(coin);
+    
+    recentlyViewed = recentlyViewed.slice(0, 5);
+    
+    localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
+    
+    return recentlyViewed;
+  }
+);
+
+export const fetchTrendingCoins = createAsyncThunk(
+  'coins/fetchTrendingCoins',
+  async () => {
+    const response = await axios.get('https://api.coingecko.com/api/v3/search/trending');
+    return response.data.coins.map(item => item.item);
+  }
+);
+
 const coinsSlice = createSlice({
   name: 'coins',
   initialState: {
     coins: [],
     coinDetails: {},
+    recentlyViewed: [],
     status: 'idle',
     error: null,
+    trendingCoins: [],
+    trendingStatus: 'idle',
+    trendingError: null,
   },
   reducers: {},
   extraReducers: (builder) => {
@@ -53,6 +83,20 @@ const coinsSlice = createSlice({
         state.status = 'failed'
         state.error = action.error.message
       })
+      .addCase(addToRecentlyViewed.fulfilled, (state, action) => {
+        state.recentlyViewed = action.payload;
+      })
+      .addCase(fetchTrendingCoins.pending, (state) => {
+        state.trendingStatus = 'loading';
+      })
+      .addCase(fetchTrendingCoins.fulfilled, (state, action) => {
+        state.trendingStatus = 'succeeded';
+        state.trendingCoins = action.payload;
+      })
+      .addCase(fetchTrendingCoins.rejected, (state, action) => {
+        state.trendingStatus = 'failed';
+        state.trendingError = action.error.message;
+      });
   }
 })
 

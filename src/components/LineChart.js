@@ -8,6 +8,23 @@ import 'chartjs-adapter-date-fns';
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, TimeScale, Title, Tooltip, Legend, CategoryScale);
 
+const filterDataForSameDay = (data) => {
+  if (data.length === 0 || data[0].prices.length === 0) return data;
+
+  const firstDate = new Date(data[0].prices[0][0]);
+  const targetDate = new Date(firstDate.getFullYear(), firstDate.getMonth(), firstDate.getDate());
+
+  return data.map(coin => ({
+    ...coin,
+    prices: coin.prices.filter(price => {
+      const priceDate = new Date(price[0]);
+      return priceDate.getDate() === targetDate.getDate() &&
+             priceDate.getMonth() === targetDate.getMonth() &&
+             priceDate.getFullYear() === targetDate.getFullYear();
+    })
+  }));
+};
+
 const LineChart = () => {
   const dispatch = useDispatch();
   const { data, status } = useSelector((state) => state.historicalData);
@@ -22,10 +39,19 @@ const LineChart = () => {
   useEffect(() => {
     if (status === 'succeeded' && chartRef.current) {
       const ctx = chartRef.current.getContext('2d');
-
+  
+      const filteredData = filterDataForSameDay(data);
+  
+      if (filteredData.length === 0 || filteredData[0].prices.length === 0) {
+        console.error('No data available for the chart');
+        return;
+      }
+  
+      const chartDate = new Date(filteredData[0].prices[0][0]).toLocaleDateString();
+  
       const chartData = {
-        labels: data[0].prices.map((price) => new Date(price[0])),
-        datasets: data.map((coin) => ({
+        labels: filteredData[0].prices.map((price) => new Date(price[0])),
+        datasets: filteredData.map((coin) => ({
           label: coin.name,
           data: coin.prices.map((price) => ({ x: new Date(price[0]), y: price[1] })),
           fill: false,
@@ -43,10 +69,10 @@ const LineChart = () => {
               : 'rgba(75, 192, 192, 0.2)',
           tension: 0.4,
           borderWidth: 1.5,
-          pointRadius: 0,
+          pointRadius: 2,
         })),
       };
-
+  
       const chart = new Chart(ctx, {
         type: 'line',
         data: chartData,
@@ -56,11 +82,14 @@ const LineChart = () => {
             x: {
               type: 'time',
               time: {
-                unit: 'day',
+                unit: 'hour',
+                displayFormats: {
+                  hour: 'HH:mm'
+                }
               },
               title: {
                 display: true,
-                text: 'Date',
+                text: 'Time',
               },
             },
             y: {
@@ -72,17 +101,26 @@ const LineChart = () => {
             },
           },
           plugins: {
+            title: {
+              display: true,
+              text: `Cryptocurrency Prices Today`,
+            },
             legend: {
               display: true,
             },
             tooltip: {
               mode: 'index',
               intersect: false,
+              callbacks: {
+                title: function(context) {
+                  return new Date(context[0].parsed.x).toLocaleString();
+                }
+              }
             },
           },
         },
       });
-
+  
       return () => {
         chart.destroy();
       };

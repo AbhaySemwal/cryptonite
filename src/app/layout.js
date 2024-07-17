@@ -2,6 +2,9 @@ import { Inter } from "next/font/google";
 import { Montserrat } from 'next/font/google'
 import "./globals.css";
 import { Providers } from "@/redux/providers";
+import Header from "@/components/Header";
+import WatchList from "@/components/WatchList";
+import RecentlyViewed from "@/components/RecentlyViewed";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,9 +22,20 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className+" "+montserrat.className}>
+      <body className={inter.className+" text-white "+montserrat.className}>
         <Providers>
-          {children}
+          <div className="w-full pb-5">
+            <Header/>
+          </div>
+          <div className="flex justify-between w-full px-2 md:px-5">
+            <div className="w-[60%]">
+              {children}
+            </div>
+            <div className="flex flex-col gap-5 w-[38%]">
+              <WatchList/>
+              <RecentlyViewed/>
+            </div>
+          </div>
         </Providers>
       </body>
     </html>
