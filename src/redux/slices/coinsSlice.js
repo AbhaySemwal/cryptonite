@@ -1,9 +1,9 @@
 // redux/slices/coinsSlice.js
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import axios from 'axios'
+import api from '@/lib/axios'
 
 export const fetchCoins = createAsyncThunk('coins/fetchCoins', async (page) => {
-  const response = await axios.get(`https://api.coingecko.com/api/v3/coins/markets`, {
+  const response = await api.get(`https://api.coingecko.com/api/v3/coins/markets`, {
     params: {
       vs_currency: 'usd',
       order: 'market_cap_desc',
@@ -16,7 +16,7 @@ export const fetchCoins = createAsyncThunk('coins/fetchCoins', async (page) => {
 })
 
 export const fetchCoinDetails = createAsyncThunk('coins/fetchCoinDetails', async (id) => {
-  const response = await axios.get(`https://api.coingecko.com/api/v3/coins/${id}`)
+  const response = await api.get(`https://api.coingecko.com/api/v3/coins/${id}`)
   return response.data
 })
 
@@ -41,7 +41,7 @@ export const addToRecentlyViewed = createAsyncThunk(
 export const fetchTrendingCoins = createAsyncThunk(
   'coins/fetchTrendingCoins',
   async () => {
-    const response = await axios.get('https://api.coingecko.com/api/v3/search/trending');
+    const response = await api.get('https://api.coingecko.com/api/v3/search/trending');
     return response.data.coins.map(item => item.item);
   }
 );

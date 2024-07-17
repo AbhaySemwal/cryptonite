@@ -27,11 +27,11 @@ export default function RootLayout({ children }) {
           <div className="w-full pb-5">
             <Header/>
           </div>
-          <div className="flex justify-between w-full px-2 md:px-5">
-            <div className="w-[60%]">
+          <div className="flex flex-col md:flex-row gap-5 w-full px-3 md:px-5">
+            <div className="w-full md:w-[65%]">
               {children}
             </div>
-            <div className="flex flex-col gap-5 w-[38%]">
+            <div className="flex flex-col gap-5 w-full md:max-w-[35%]">
               <WatchList/>
               <RecentlyViewed/>
             </div>

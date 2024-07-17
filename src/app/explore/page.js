@@ -29,7 +29,7 @@ const ExplorePage = () => {
 
   return (
     <div className="p-3 text-xs text-white border-[2px] rounded-lg border-gray-600 bg-gray-950">
-      <h1 className="text-xl font-bold mb-4">Explore</h1>
+      <h1 className="text-xl font-bold md:text-left text-center mb-4">Explore</h1>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>

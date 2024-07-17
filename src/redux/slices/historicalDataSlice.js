@@ -1,16 +1,18 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-
+import api from '@/lib/axios';
 const API_URL = 'https://api.coingecko.com/api/v3';
+const API_KEY = 'CG-YAT6Xo52tQ3uFMoytsczBi1u';
 
 export const fetchHistoricalData = createAsyncThunk('historicalData/fetchHistoricalData', async () => {
   const coins = ['bitcoin', 'ethereum', 'binancecoin'];
   const days = '30'; // Fetch data for the last 30 days
   const promises = coins.map((coin) =>
-    axios.get(`${API_URL}/coins/${coin}/market_chart`, {
+    api.get(`${API_URL}/coins/${coin}/market_chart`, 
+      {
       params: {
         vs_currency: 'usd',
         days: days,
+        api_key: API_KEY
       },
     })
   );

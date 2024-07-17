@@ -42,12 +42,12 @@ const TrendingMarket = () => {
   
   return (
     <div className="p-3 text-xs text-white border-[2px] rounded-lg border-gray-600 bg-gray-950">
-      <h1 className="text-xl font-bold mb-4">Trending</h1>
+      <h1 className="text-lg md:text-xl font-bold mb-4 text-center md:text-left">Trending</h1>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="text-gray-500 uppercase leading-normal border-b-[1px] border-gray-800">
-              <th className="py-2 px-3 text-left">Token</th>
+              <th className="py-2 px-6 md:px-3 text-left">Token</th>
               <th className="py-2 px-3 text-left">Symbol</th>
               <th className="py-2 px-3 text-right">Last Price</th>
               <th className="py-2 px-3 text-right">24h Change</th>

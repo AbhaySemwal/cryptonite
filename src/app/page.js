@@ -2,7 +2,7 @@ import HomeContent from "@/components/HomeContent";
 
 export default function Home() {
   return (
-    <main className="text-white pb-5">
+    <main className="text-white">
       <HomeContent/>
     </main>
   );

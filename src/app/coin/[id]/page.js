@@ -161,32 +161,32 @@ const CoinPage = () => {
 
   return (
     <div className="flex flex-col gap-5 mx-auto text-white">
-      <div className='p-5 border-2 border-gray-600 bg-gray-950 rounded-lg'>
-        <h1 className="text-2xl text-center mb-8 font-semibold">{coinData.name}</h1>
+      <div className='p-2 md:p-3 border-2 border-gray-600 bg-gray-950 rounded-lg'>
+        <h1 className="text-lg md:text-2xl text-center mb-8 font-semibold">{coinData.name}</h1>
         <canvas ref={chartRef} />
       </div>
-      <div className='p-5 border-2 border-gray-600 bg-gray-950 rounded-lg'>
-        <h2 className="text-2xl mb-4 font-semibold">Price Change Percentages</h2>
+      <div className='p-2 md:p-3 border-2 border-gray-600 bg-gray-950 rounded-lg'>
+        <h2 className="text-lg md:text-2xl mb-4 text-center md:text-left font-semibold">Price Change Percentages</h2>
         <canvas ref={barChartRef} />
       </div>
-      <div className='flex justify-between'>
-        <div className='w-[48%] p-5 border-2 border-gray-600 bg-gray-950 rounded-lg'>
-          <h2 className="text-2xl font-semibold mb-4">Fundamentals</h2>
-          <p className='text-sm py-1'><strong>Market Cap:</strong> {coinData.market_data.market_cap.usd}</p>
-          <p className='text-sm py-1'><strong>Total Supply:</strong> {coinData.market_data.total_supply}</p>
-          <p className='text-sm py-1'><strong>Max Supply:</strong> {coinData.market_data.max_supply}</p>
+      <div className='flex md:flex-row flex-col gap-5 justify-between'>
+        <div className='w-full md:w-[48%] p-2 md:p-3 border-2 border-gray-600 bg-gray-950 rounded-lg text-xs md:text-sm'>
+          <h2 className="text-lg md:text-2xl font-semibold mb-4">Fundamentals</h2>
+          <p className='py-1'><strong>Market Cap:</strong> {coinData.market_data.market_cap.usd}</p>
+          <p className='py-1'><strong>Total Supply:</strong> {coinData.market_data.total_supply}</p>
+          <p className='py-1'><strong>Max Supply:</strong> {coinData.market_data.max_supply}</p>
         </div>
-        <div className="w-[48%] p-5 border-2 border-gray-600 bg-gray-950 rounded-lg">
-          <h2 className="text-2xl font-semibold mb-4">Coin Information</h2>
-          <p className='text-sm py-1'><strong>Symbol:</strong> {coinData.symbol}</p>
-          <p className='text-sm py-1'><strong>Market Cap:</strong> {coinData.market_data.market_cap.usd}</p>
-          <p className='text-sm py-1'><strong>Current Price:</strong> {coinData.market_data.current_price.usd}</p>
-          <p className='text-sm py-1'><strong>Total Volume:</strong> {coinData.market_data.total_volume.usd}</p>
+        <div className="w-full md:w-[48%] p-2 md:p-3 border-2 border-gray-600 bg-gray-950 rounded-lg text-xs md:text-sm">
+          <h2 className="text-lg md:text-2xl font-semibold mb-4">Coin Information</h2>
+          <p className='py-1'><strong>Symbol:</strong> {coinData.symbol}</p>
+          <p className='py-1'><strong>Market Cap:</strong> {coinData.market_data.market_cap.usd}</p>
+          <p className='py-1'><strong>Current Price:</strong> {coinData.market_data.current_price.usd}</p>
+          <p className='py-1'><strong>Total Volume:</strong> {coinData.market_data.total_volume.usd}</p>
         </div>
       </div>
-      <div className='p-5 border-2 border-gray-600 bg-gray-950 rounded-lg mb-5'>
-        <h2 className="text-2xl font-semibold mb-4">About {coinData.name}</h2>
-        <p className='text-sm' dangerouslySetInnerHTML={{ __html: coinData.description.en }} />
+      <div className='p-2 md:p-3 border-2 border-gray-600 bg-gray-950 rounded-lg mb-5'>
+        <h2 className="text-lg md:text-2xl md:text-left text-center font-semibold mb-4">About {coinData.name}</h2>
+        <p className='text-xs md:text-sm md:text-left text-center' dangerouslySetInnerHTML={{ __html: coinData.description.en }} />
       </div>
     </div>
   );
