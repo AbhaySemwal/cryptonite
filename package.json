@@ -15,7 +15,6 @@
     "@mui/material": "^5.16.3",
     "@reduxjs/toolkit": "^2.2.6",
     "axios": "^1.7.2",
-    "axios-cache-adapter": "^2.7.3",
     "chart.js": "^4.4.3",
     "chartjs-adapter-date-fns": "^3.0.0",
     "date-fns": "^3.6.0",
