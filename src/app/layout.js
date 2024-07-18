@@ -1,5 +1,4 @@
-import { Inter } from "next/font/google";
-import { Montserrat } from 'next/font/google'
+import { Inter, Montserrat } from 'next/font/google';
 import "./globals.css";
 import { Providers } from "@/redux/providers";
 import Header from "@/components/Header";
@@ -12,7 +11,7 @@ const montserrat = Montserrat({
   subsets: ['latin'],
   style: ['normal'],
   weight: ['400'],
-})
+});
 
 export const metadata = {
   title: "Cryptonite",
@@ -22,18 +21,18 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={inter.className+" text-white "+montserrat.className}>
+      <body className={`${inter.className} text-white ${montserrat.className}`}>
         <Providers>
           <div className="w-full pb-5">
-            <Header/>
+            <Header />
           </div>
           <div className="flex flex-col md:flex-row gap-5 w-full px-3 md:px-5">
             <div className="w-full md:w-[65%]">
               {children}
             </div>
             <div className="flex flex-col gap-5 w-full md:max-w-[35%]">
-              <WatchList/>
-              <RecentlyViewed/>
+              <WatchList />
+              <RecentlyViewed />
             </div>
           </div>
         </Providers>
