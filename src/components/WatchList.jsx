@@ -1,33 +1,61 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchCoins } from '../redux/slices/coinsSlice';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Link from 'next/link';
+import { addToWatchlist, setWatchlist } from '@/redux/slices/watchListSlice';
+import { addToRecentlyViewed } from '@/redux/slices/coinsSlice';
 
 const WatchList = () => {
   const dispatch = useDispatch();
-  const { coins, status, error } = useSelector((state) => state.coins);
+  const isDarkMode = useSelector((state) => state.theme.isDarkMode);
+  const watchlist = useSelector((state) => state.watchlist) || [];
   const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
-    if (status === 'idle') {
-      dispatch(fetchCoins(1)); // Fetch the first page of coins
+    const storedWatchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
+    dispatch(setWatchlist(storedWatchlist));
+  }, [dispatch]);
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+  
+  const handleDrop = (e) => {
+    e.preventDefault();
+    const coinData = JSON.parse(e.dataTransfer.getData('text/plain'));
+    if (!watchlist.some(coin => coin.id === coinData.id)) {
+      dispatch(addToWatchlist(coinData));
+      dispatch(addToRecentlyViewed(coinData));
+      const newWatchlist = [...watchlist, coinData];
+      localStorage.setItem('watchlist', JSON.stringify(newWatchlist));
+      
+      const recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+      const updatedRecentlyViewed = [coinData, ...recentlyViewed.filter(coin => coin.id !== coinData.id)].slice(0, 10);
+      localStorage.setItem('recentlyViewed', JSON.stringify(updatedRecentlyViewed));
     }
-  }, [status, dispatch]);
+  };
 
-  if (status === 'loading') {
-    return <div>Loading...</div>;
+  if (watchlist.length === 0) {
+    return (
+      <div 
+        className={`p-3 text-xs border-[2px] rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"} min-h-[200px] flex items-center justify-center`}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+      >
+        Drag and drop coins here to add to your watchlist
+      </div>
+    );
   }
 
-  if (status === 'failed') {
-    return <div>Error: {error}</div>;
-  }
-
-  const displayedCoins = showAll ? coins : coins.slice(0, 5);
+  const displayedCoins = showAll ? watchlist : watchlist.slice(0, 5);
 
   return (
-    <div className="p-3 text-xs text-white border-[2px] rounded-lg border-gray-600 bg-gray-950">
+    <div 
+      className={`p-3 text-xs border-[2px] rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"}`}
+      onDragOver={handleDragOver}
+      onDrop={handleDrop}
+    >
       <h1 className="text-lg md:text-xl font-bold mb-4 text-center md:text-left">Watchlist</h1>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -41,30 +69,30 @@ const WatchList = () => {
           </thead>
           <tbody className="text-gray-500 font-light">
             {displayedCoins.map((coin) => (
-              <tr key={coin.id} className="hover:bg-gray-900 cursor-pointer">
+              <tr key={coin?.id} className={`${isDarkMode ? "hover:bg-gray-900" : "hover:bg-gray-200"} cursor-pointer`}>
                 <td className="py-2 px-3 text-left whitespace-nowrap">
-                  <Link href={`/coin/${coin.id}`} className="flex items-center group">
-                    <img className="w-6 h-6 rounded-full mr-2" src={coin.image} alt={coin.name} />
+                  <Link href={`/coin/${coin?.id}`} className="flex items-center group">
+                    <img className="w-6 h-6 rounded-full mr-2" src={coin?.large} alt={coin?.name} />
                     <span className="font-medium text-blue-400 group-hover:text-blue-300">
                       {coin.symbol.toUpperCase()}
                     </span>
                   </Link>
                 </td>
                 <td className="py-2 px-3 text-right">
-                  ${coin.current_price.toLocaleString()}
+                  ${parseFloat(coin?.data.price).toFixed(8)}
                 </td>
-                <td className={`py-2 px-3 text-right ${coin.price_change_percentage_24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {coin.price_change_percentage_24h.toFixed(2)}%
+                <td className={`py-2 px-3 text-right ${coin?.data.price_change_percentage_24h.usd >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {coin?.data.price_change_percentage_24h.usd.toFixed(2)}%
                 </td>
                 <td className="py-2 px-3 text-right">
-                  ${coin.market_cap.toLocaleString()}
+                  {coin?.data.market_cap}
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      {coins.length > 5 && (
+      {watchlist.length > 5 && (
         <div className="text-center mt-2">
           <button
             onClick={() => setShowAll(!showAll)}

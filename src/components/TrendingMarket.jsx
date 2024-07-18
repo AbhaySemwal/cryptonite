@@ -7,8 +7,13 @@ import Link from 'next/link';
 
 const TrendingMarket = () => {
   const dispatch = useDispatch();
+  const isDarkMode = useSelector((state) => state.theme.isDarkMode)
   const { trendingCoins, trendingStatus, trendingError } = useSelector((state) => state.coins);
   const [showAll, setShowAll] = useState(false);
+
+  const handleDragStart = (e, coin) => {
+    e.dataTransfer.setData('text/plain', JSON.stringify(coin));
+  };
 
   useEffect(() => {
     if (trendingStatus === 'idle') {
@@ -41,7 +46,7 @@ const TrendingMarket = () => {
   const displayedCoins = showAll ? trendingCoins : trendingCoins.slice(0, 5);
   
   return (
-    <div className="p-3 text-xs text-white border-[2px] rounded-lg border-gray-600 bg-gray-950">
+    <div className={`p-3 text-xs ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"} border-[2px] rounded-lg `}>
       <h1 className="text-lg md:text-xl font-bold mb-4 text-center md:text-left">Trending</h1>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -56,7 +61,7 @@ const TrendingMarket = () => {
           </thead>
           <tbody className="text-gray-500 font-light">
             {displayedCoins.map((coin) => (
-              <tr key={coin.id} className="hover:bg-gray-900 cursor-pointer">
+              <tr key={coin.id} draggable onDragStart={(e) => handleDragStart(e, coin)} className={`${isDarkMode?"hover:bg-gray-900":"hover:bg-gray-200"} cursor-pointer`}>
                 <td className="py-2 px-3 text-left whitespace-nowrap">
                   <Link href={`/coin/${coin.id}`} className="flex items-center group">
                     <img className="w-6 h-6 rounded-full mr-2" src={coin.large} alt={coin.name} />

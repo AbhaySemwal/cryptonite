@@ -10,10 +10,11 @@ Chart.register(LineController, LineElement, PointElement, LinearScale, TimeScale
 
 const LineChart = () => {
   const dispatch = useDispatch();
+  const isDarkMode = useSelector((state) => state.theme.isDarkMode)
   const { data, status, error } = useSelector((state) => state.historicalData);
   const chartRef = useRef(null);
+  const chartInstanceRef = useRef(null);
   const [timeRange, setTimeRange] = useState('30d');
-  const [chartInstance, setChartInstance] = useState(null);
 
   useEffect(() => {
     if (status === 'idle') {
@@ -51,11 +52,11 @@ const LineChart = () => {
 
       const filteredData = filterDataByTimeRange(data, timeRange);
 
-      if (chartInstance) {
-        chartInstance.destroy();
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
       }
 
-      const newChartInstance = new Chart(ctx, {
+      chartInstanceRef.current = new Chart(ctx, {
         type: 'line',
         data: {
           datasets: filteredData.map((coin) => ({
@@ -106,9 +107,14 @@ const LineChart = () => {
           }
         }
       });
-
-      setChartInstance(newChartInstance);
     }
+
+    return () => {
+      if (chartInstanceRef.current) {
+        chartInstanceRef.current.destroy();
+        chartInstanceRef.current = null;
+      }
+    };
   }, [data, status, timeRange]);
 
   const handleTimeRangeChange = (range) => {
@@ -126,10 +132,10 @@ const LineChart = () => {
   return (
     <div className='w-full'>
       <canvas ref={chartRef} />
-      <div className="text-white flex justify-center gap-2 text-xs py-2">
-        <button onClick={() => handleTimeRangeChange('24h')} className="bg-gray-800 py-1 px-2 rounded-md">24h</button>
-        <button onClick={() => handleTimeRangeChange('7d')} className="bg-gray-800 py-1 px-2 rounded-md">7d</button>
-        <button onClick={() => handleTimeRangeChange('30d')} className="bg-gray-800 py-1 px-2 rounded-md">30d</button>
+      <div className={`${isDarkMode?"text-white":"text-black"} flex justify-center gap-2 text-xs py-2`}>
+        <button onClick={() => handleTimeRangeChange('24h')} className={`${isDarkMode?"bg-gray-800":"bg-gray-300"} py-1 px-2 rounded-md`}>24h</button>
+        <button onClick={() => handleTimeRangeChange('7d')} className={`${isDarkMode?"bg-gray-800":"bg-gray-300"} py-1 px-2 rounded-md`}>7d</button>
+        <button onClick={() => handleTimeRangeChange('30d')} className={`${isDarkMode?"bg-gray-800":"bg-gray-300"} py-1 px-2 rounded-md`}>30d</button>
       </div>
     </div>
   );

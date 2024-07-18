@@ -1,12 +1,10 @@
+// app/layout.js
 import { Inter, Montserrat } from 'next/font/google';
 import "./globals.css";
 import { Providers } from "@/redux/providers";
-import Header from "@/components/Header";
-import WatchList from "@/components/WatchList";
-import RecentlyViewed from "@/components/RecentlyViewed";
+import ThemeAwareLayout from '@/components/ThemeAwareLayout';
 
 const inter = Inter({ subsets: ["latin"] });
-
 const montserrat = Montserrat({
   subsets: ['latin'],
   style: ['normal'],
@@ -21,20 +19,11 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${inter.className} text-white ${montserrat.className}`}>
+      <body className={`${inter.className} ${montserrat.className}`}>
         <Providers>
-          <div className="w-full pb-5">
-            <Header />
-          </div>
-          <div className="flex flex-col md:flex-row gap-5 w-full px-3 md:px-5">
-            <div className="w-full md:w-[65%]">
-              {children}
-            </div>
-            <div className="flex flex-col gap-5 w-full md:max-w-[35%]">
-              <WatchList />
-              <RecentlyViewed />
-            </div>
-          </div>
+          <ThemeAwareLayout>
+            {children}
+          </ThemeAwareLayout>
         </Providers>
       </body>
     </html>

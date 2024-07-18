@@ -1,8 +1,23 @@
-import React from 'react';
+"use client"
+import { setTheme } from '@/redux/slices/themeSlice';
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 const PublicCompaniesHoldings = ({ companies }) => {
+  const dispatch = useDispatch();
+  const [isDarkMode,setIsDarkMode]=useState(true);
+  const dm = useSelector((state) => state.theme.isDarkMode);
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('isDarkMode');
+      setIsDarkMode(savedTheme !== null ? JSON.parse(savedTheme) : true)
+      if (savedTheme !== null) {
+        dispatch(setTheme(JSON.parse(savedTheme)));
+      }
+    }
+  }, [dispatch,dm]);
   return (
-    <div className="p-3 border-[2px] rounded-lg border-gray-600 bg-gray-950">
+    <div className={`p-3 border-[2px] rounded-lg ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"}`}>
       <h2 className="text-lg md:text-xl font-bold mb-4 text-center md:text-left">Public Companies Holdings</h2>
       <table className="w-full text-xs">
         <thead>

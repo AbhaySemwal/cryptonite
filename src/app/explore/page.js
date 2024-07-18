@@ -9,6 +9,7 @@ const ExplorePage = () => {
   const dispatch = useDispatch();
   const { coins, status, error } = useSelector((state) => state.coins);
   const [page, setPage] = useState(1);
+  const isDarkMode = useSelector((state) => state.theme.isDarkMode)
 
   useEffect(() => {
     dispatch(fetchCoins(page));
@@ -28,7 +29,7 @@ const ExplorePage = () => {
   };
 
   return (
-    <div className="p-3 text-xs text-white border-[2px] rounded-lg border-gray-600 bg-gray-950">
+    <div className={`p-3 text-xs border-[2px] rounded-lg ${isDarkMode?"bg-gray-950 border-gray-600":"bg-gray-100 border-gray-400"}`}>
       <h1 className="text-xl font-bold md:text-left text-center mb-4">Explore</h1>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -46,7 +47,7 @@ const ExplorePage = () => {
           </thead>
           <tbody className="text-gray-500 font-light">
             {coins.map((coin) => (
-              <tr key={coin.id} className="hover:bg-gray-900 cursor-pointer">
+              <tr key={coin.id} className={`${isDarkMode?"hover:bg-gray-900":"hover:bg-gray-200"} cursor-pointer`}>
                 <td className="py-2 px-3 text-left whitespace-nowrap">
                   <Link href={`/coin/${coin.id}`} className="flex items-center group">
                     <img className="w-6 h-6 rounded-full mr-2" src={coin.image} alt={coin.name} />

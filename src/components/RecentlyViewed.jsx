@@ -1,78 +1,83 @@
 'use client';
 
-import { addToRecentlyViewed, fetchCoinDetails } from '@/redux/slices/coinsSlice';
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-// import { addToRecentlyViewed, fetchCoinData } from '../redux/slices/coinsSlice';
+import { addToRecentlyViewed, fetchCoinDetails } from '@/redux/slices/coinsSlice';
 
 const RecentlyViewed = () => {
   const dispatch = useDispatch();
-  const { recentlyViewed } = useSelector((state) => state.coins);
-  const [updatedCoins, setUpdatedCoins] = useState([]);
+  const [showAll,setShowAll]=useState(false)
+  const isDarkMode = useSelector((state) => state.theme.isDarkMode);
+  const { recentlyViewed, coinDetails } = useSelector((state) => state.coins);
 
   useEffect(() => {
-    // Load recently viewed coins from local storage on component mount
     const storedRecentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
     storedRecentlyViewed.forEach(coin => dispatch(addToRecentlyViewed(coin)));
   }, [dispatch]);
 
   useEffect(() => {
-    // Fetch updated data for each coin
-    const fetchUpdatedData = async () => {
-      const updatedData = await Promise.all(
-        recentlyViewed.map(coin => dispatch(fetchCoinDetails(coin.id)))
-      );
-      setUpdatedCoins(updatedData.map(result => result.payload));
-    };
+    recentlyViewed.forEach(coin => {
+      if (!coinDetails[coin.id]) {
+        dispatch(fetchCoinDetails(coin.id));
+      }
+    });
+  }, [recentlyViewed, dispatch, coinDetails]);
 
-    if (recentlyViewed.length > 0) {
-      fetchUpdatedData();
-    }
-  }, [recentlyViewed, dispatch]);
-
-  if (updatedCoins.length === 0) {
-    return <div className="text-center py-4 text-white">No recently viewed cryptocurrencies.</div>;
+  if (recentlyViewed.length === 0) {
+    return <p>No recently viewed cryptocurrencies.</p>;
   }
-
-  
+  const displayedCoins = showAll ? recentlyViewed : recentlyViewed.slice(0, 5);
   return (
-    <div className="p-3 text-xs text-white border-[2px] rounded-lg border-gray-600 bg-gray-950">
+    <div className={`p-3 text-xs border-[2px] rounded-lg ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"}`}>
       <h2 className="text-xl font-bold mb-4">Recently Viewed</h2>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="text-gray-500 uppercase leading-normal border-b-[1px] border-gray-800">
               <th className="py-2 px-3 text-left">Token</th>
-              <th className="py-2 px-3 text-right">Last Price</th>
-              <th className="py-2 px-3 text-right">24h Change</th>
-              <th className="py-2 px-3 text-right">Market Cap</th>
+              <th className="py-2 px-3 text-right">Rank</th>
+              <th className="py-2 px-3 text-right">Genesis Date</th>
+              <th className="py-2 px-3 text-right">Current Price</th>
             </tr>
           </thead>
           <tbody className="text-gray-500 font-light">
-            {updatedCoins.map((coin) => (
-              <tr key={coin?.id} className="hover:bg-gray-900 cursor-pointer">
-                <td className="py-2 px-3 text-left whitespace-nowrap">
-                  <Link href={`/coin/${coin?.id}`} className="flex items-center group">
-                    <img className="w-6 h-6 rounded-full mr-2" src={coin?.image.thumb} alt={coin?.name} />
-                    <span className="font-medium text-blue-400 group-hover:text-blue-300">
-                      {coin?.symbol.toUpperCase()}
-                    </span>
-                  </Link>
-                </td>
-                <td className="py-2 px-3 text-right">
-                  ${coin?.market_data.current_price.usd.toLocaleString()}
-                </td>
-                <td className={`py-2 px-3 text-right ${coin?.market_data.price_change_percentage_24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {coin?.market_data.price_change_percentage_24h.toFixed(2)}%
-                </td>
-                <td className="py-2 px-3 text-right">
-                  ${coin?.market_data.market_cap.usd.toLocaleString()}
-                </td>
-              </tr>
-            ))}
+            {displayedCoins.map((coin) => {
+              const currentData = coinDetails[coin.id];
+              return (
+                <tr key={coin.id} className={`${isDarkMode?"hover:bg-gray-900":"hover:bg-gray-200"} cursor-pointer`}>
+                  <td className="py-2 px-3 text-left whitespace-nowrap">
+                    <Link href={`/coin/${coin.id}`} className="flex items-center group">
+                      <img className="w-6 h-6 rounded-full mr-2" src={coin.image} alt={coin.name} />
+                      <span className="font-medium text-blue-400 group-hover:text-blue-300">
+                        {coin.symbol.toUpperCase()}
+                      </span>
+                    </Link>
+                  </td>
+                  <td className="py-2 px-3 text-right">
+                    {coin.market_cap_rank}
+                  </td>
+                  <td className="py-2 px-3 text-right">
+                    {coin.genesis_date || 'N/A'}
+                  </td>
+                  <td className="py-2 px-3 text-right">
+                    {currentData ? `$${currentData.market_data.current_price.usd.toLocaleString()}` : 'Loading...'}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
+        {displayedCoins.length > 5 && (
+        <div className="text-center mt-2">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs"
+          >
+            {showAll ? 'Show Less' : 'View More'}
+          </button>
+        </div>
+      )}
       </div>
     </div>
   );
