@@ -113,11 +113,11 @@ const CoinPriceChart = ({ isDarkMode,coinId, historicalData }) => {
   return (
     <div className='w-full'>
       <canvas ref={chartRef} />
-        <div className={`${isDarkMode?"text-white":"text-black"} flex justify-center gap-2 text-xs py-2`}>
-          <button onClick={() => handleTimeRangeChange('24h')} className={`${isDarkMode?"bg-gray-800":"bg-gray-300"} py-1 px-2 rounded-md`}>24h</button>
-          <button onClick={() => handleTimeRangeChange('7d')} className={`${isDarkMode?"bg-gray-800":"bg-gray-300"} py-1 px-2 rounded-md`}>7d</button>
-          <button onClick={() => handleTimeRangeChange('30d')} className={`${isDarkMode?"bg-gray-800":"bg-gray-300"} py-1 px-2 rounded-md`}>30d</button>
-        </div>
+      <div className={`${isDarkMode?"text-white":"text-black"} flex justify-center gap-2 text-xs py-2`}>
+        <button onClick={() => handleTimeRangeChange('24h')} className={`theme-transition ${isDarkMode? timeRange==='24h'?"bg-gray-600":"bg-gray-800":timeRange==='24h'?"bg-gray-400":"bg-gray-300"} py-1 px-2 rounded-md`}>24h</button>
+        <button onClick={() => handleTimeRangeChange('7d')} className={`theme-transition ${isDarkMode? timeRange==='7d'?"bg-gray-600":"bg-gray-800":timeRange==='7d'?"bg-gray-400":"bg-gray-300"} py-1 px-2 rounded-md`}>7d</button>
+        <button onClick={() => handleTimeRangeChange('30d')} className={`theme-transition ${isDarkMode? timeRange==='30d'?"bg-gray-600":"bg-gray-800":timeRange==='30d'?"bg-gray-400":"bg-gray-300"} py-1 px-2 rounded-md`}>30d</button>
+      </div>
     </div>
   );
 };

@@ -22,11 +22,15 @@ const TrendingMarket = () => {
   }, [trendingStatus, dispatch]);
 
   if (trendingStatus === 'loading') {
-    return <div className="text-white">Loading trending coins...</div>;
+    return <div className={`p-3 theme-transition ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"} border-[2px] rounded-lg `}>
+      Loading trending coins...
+    </div>;
   }
 
   if (trendingStatus === 'failed') {
-    return <div className="text-red-500">Error: {trendingError}</div>;
+    return <div className={`p-3 theme-transition ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"} border-[2px] rounded-lg `}>
+      Error: {trendingError}
+    </div>;
   }
 
   const formatPrice = (price) => {
@@ -46,7 +50,7 @@ const TrendingMarket = () => {
   const displayedCoins = showAll ? trendingCoins : trendingCoins.slice(0, 5);
   
   return (
-    <div className={`p-3 text-xs ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"} border-[2px] rounded-lg `}>
+    <div className={`theme-transition p-3 text-xs ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"} border-[2px] rounded-lg `}>
       <h1 className="text-lg md:text-xl font-bold mb-4 text-center md:text-left">Trending</h1>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -82,13 +86,11 @@ const TrendingMarket = () => {
         </table>
       </div>
       {trendingCoins.length > 5 && (
-        <div className="text-center mt-2">
-          <button
+        <div
             onClick={() => setShowAll(!showAll)}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs"
+            className={`theme-transition w-full text-center mt-2 font-bold py-1.5 px-2 rounded text-xs cursor-pointer ${isDarkMode?"text-white bg-gray-900":"text-black bg-gray-200"}`}
           >
             {showAll ? 'Show Less' : 'View More'}
-          </button>
         </div>
       )}
     </div>

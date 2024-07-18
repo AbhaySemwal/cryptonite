@@ -1,5 +1,4 @@
 "use client"
-
 import { useSelector } from 'react-redux';
 import Header from "@/components/Header";
 import WatchList from "@/components/WatchList";
@@ -8,11 +7,11 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setTheme } from '@/redux/slices/themeSlice';
 
-
 export default function ThemeAwareLayout({ children }) {
   const dispatch = useDispatch();
-  const [isDarkMode,setIsDarkMode]=useState(true);
+  const [isDarkMode, setIsDarkMode] = useState(true);
   const dm = useSelector((state) => state.theme.isDarkMode);
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const savedTheme = localStorage.getItem('isDarkMode');
@@ -21,22 +20,22 @@ export default function ThemeAwareLayout({ children }) {
         dispatch(setTheme(JSON.parse(savedTheme)));
       }
     }
-  }, [dispatch,dm]);
-  // const isDarkMode = useSelector((state) => state.theme.isDarkMode);
+  }, [dispatch, dm]);
+
   return (
-    <div className={`min-h-screen ${
+    <div className={`theme-transition min-h-screen ${
       isDarkMode ? 'bg-black text-white' : 'bg-white text-black'
     }`}>
       <div className="w-full pb-5">
         <Header />
       </div>
-      <div className="flex flex-col md:flex-row gap-5 w-full px-3 md:px-5">
-        <div className="w-full md:w-[65%]">
+      <div className="flex flex-col md:flex-row gap-5 w-full px-3 md:px-5 overflow-hidden">
+        <div className="w-full md:w-[65%] animate-slide-in-left">
           {children}
         </div>
-        <div className="flex flex-col gap-5 w-full md:max-w-[35%]">
-          <WatchList />
+        <div className="flex flex-col gap-5 w-full md:max-w-[35%] animate-slide-in-right">
           <RecentlyViewed/>
+          <WatchList />
         </div>
       </div>
     </div>

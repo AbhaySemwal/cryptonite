@@ -26,20 +26,20 @@ const WatchList = () => {
     const coinData = JSON.parse(e.dataTransfer.getData('text/plain'));
     if (!watchlist.some(coin => coin.id === coinData.id)) {
       dispatch(addToWatchlist(coinData));
-      dispatch(addToRecentlyViewed(coinData));
+      // dispatch(addToRecentlyViewed(coinData));
       const newWatchlist = [...watchlist, coinData];
       localStorage.setItem('watchlist', JSON.stringify(newWatchlist));
       
-      const recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
-      const updatedRecentlyViewed = [coinData, ...recentlyViewed.filter(coin => coin.id !== coinData.id)].slice(0, 10);
-      localStorage.setItem('recentlyViewed', JSON.stringify(updatedRecentlyViewed));
+      // const recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
+      // const updatedRecentlyViewed = [coinData, ...recentlyViewed.filter(coin => coin.id !== coinData.id)].slice(0, 10);
+      // localStorage.setItem('recentlyViewed', JSON.stringify(updatedRecentlyViewed));
     }
   };
 
   if (watchlist.length === 0) {
     return (
       <div 
-        className={`p-3 text-xs border-[2px] rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"} min-h-[200px] flex items-center justify-center`}
+        className={`mb-5 theme-transition p-3 border-[2px] rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"} min-h-[200px] flex items-center justify-center`}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
@@ -48,11 +48,22 @@ const WatchList = () => {
     );
   }
 
+  const formatPercentage = (value) => {
+    if (value === undefined || value === null) return 'N/A';
+    return value.toFixed(2) + '%';
+  };
+
+  const formatPrice = (value) => {
+    if (value === undefined || value === null) return 'N/A';
+    return '$' + value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+
   const displayedCoins = showAll ? watchlist : watchlist.slice(0, 5);
 
   return (
     <div 
-      className={`p-3 text-xs border-[2px] rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"}`}
+      className={`theme-transition p-3 text-xs border-[2px] mb-5 rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"}`}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >
@@ -69,23 +80,23 @@ const WatchList = () => {
           </thead>
           <tbody className="text-gray-500 font-light">
             {displayedCoins.map((coin) => (
-              <tr key={coin?.id} className={`${isDarkMode ? "hover:bg-gray-900" : "hover:bg-gray-200"} cursor-pointer`}>
+              <tr key={coin?.id} className={`theme-transition ${isDarkMode ? "hover:bg-gray-900" : "hover:bg-gray-200"} cursor-pointer`}>
                 <td className="py-2 px-3 text-left whitespace-nowrap">
                   <Link href={`/coin/${coin?.id}`} className="flex items-center group">
-                    <img className="w-6 h-6 rounded-full mr-2" src={coin?.large} alt={coin?.name} />
+                    <img className="w-6 h-6 rounded-full mr-2" src={coin?.large||coin.image} alt={coin?.name} />
                     <span className="font-medium text-blue-400 group-hover:text-blue-300">
                       {coin.symbol.toUpperCase()}
                     </span>
                   </Link>
                 </td>
                 <td className="py-2 px-3 text-right">
-                  ${parseFloat(coin?.data.price).toFixed(8)}
+                  ${coin.current_price?formatPrice(coin.current_price):parseFloat(coin?.data?.price).toFixed(8)}
                 </td>
-                <td className={`py-2 px-3 text-right ${coin?.data.price_change_percentage_24h.usd >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {coin?.data.price_change_percentage_24h.usd.toFixed(2)}%
+                <td className={`py-2 px-3 text-right ${(coin?.data?coin?.data?.price_change_percentage_24h.usd:coin?.price_change_percentage_24h.usd)>= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {coin.data?coin?.data.price_change_percentage_24h.usd.toFixed(2):formatPercentage(coin.price_change_percentage_24h)}%
                 </td>
                 <td className="py-2 px-3 text-right">
-                  {coin?.data.market_cap}
+                  {coin?.data?coin?.data.market_cap:coin?.market_cap}
                 </td>
               </tr>
             ))}
@@ -93,13 +104,11 @@ const WatchList = () => {
         </table>
       </div>
       {watchlist.length > 5 && (
-        <div className="text-center mt-2">
-          <button
+        <div
             onClick={() => setShowAll(!showAll)}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs"
+            className={`w-full text-center mt-2 font-bold py-1.5 px-2 rounded text-xs cursor-pointer ${isDarkMode?"text-white bg-gray-900":"text-black bg-gray-200"}`}
           >
             {showAll ? 'Show Less' : 'View More'}
-          </button>
         </div>
       )}
     </div>

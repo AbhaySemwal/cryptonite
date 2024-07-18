@@ -3,17 +3,17 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToRecentlyViewed, fetchCoinDetails } from '@/redux/slices/coinsSlice';
+import { addToRecentlyViewed, fetchCoinDetails, initializeRecentlyViewed } from '@/redux/slices/coinsSlice';
 
 const RecentlyViewed = () => {
   const dispatch = useDispatch();
-  const [showAll,setShowAll]=useState(false)
+  const [showAll, setShowAll] = useState(false);
   const isDarkMode = useSelector((state) => state.theme.isDarkMode);
   const { recentlyViewed, coinDetails } = useSelector((state) => state.coins);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    const storedRecentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
-    storedRecentlyViewed.forEach(coin => dispatch(addToRecentlyViewed(coin)));
+    dispatch(initializeRecentlyViewed()).then(() => setIsLoading(false));
   }, [dispatch]);
 
   useEffect(() => {
@@ -25,11 +25,15 @@ const RecentlyViewed = () => {
   }, [recentlyViewed, dispatch, coinDetails]);
 
   if (recentlyViewed.length === 0) {
-    return <p>No recently viewed cryptocurrencies.</p>;
+    return(
+      <div className={`p-3 text-center border-[2px] rounded-lg ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"}`}>
+        No recently viewed cryptocurrencies.
+      </div>
+    );
   }
   const displayedCoins = showAll ? recentlyViewed : recentlyViewed.slice(0, 5);
   return (
-    <div className={`p-3 text-xs border-[2px] rounded-lg ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"}`}>
+    <div className={`theme-transition p-3 text-xs border-[2px] rounded-lg ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"}`}>
       <h2 className="text-xl font-bold mb-4">Recently Viewed</h2>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -69,13 +73,11 @@ const RecentlyViewed = () => {
           </tbody>
         </table>
         {displayedCoins.length > 5 && (
-        <div className="text-center mt-2">
-          <button
+          <div
             onClick={() => setShowAll(!showAll)}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs"
+            className={`w-full text-center mt-2 font-bold py-1.5 px-2 rounded text-xs cursor-pointer ${isDarkMode?"text-white bg-gray-900":"text-black bg-gray-200"}`}
           >
             {showAll ? 'Show Less' : 'View More'}
-          </button>
         </div>
       )}
       </div>

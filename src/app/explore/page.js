@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Link from 'next/link';
 import { fetchCoins } from '@/redux/slices/coinsSlice';
+import { ArrowLeft, ArrowRight } from '@mui/icons-material';
 
 const ExplorePage = () => {
   const dispatch = useDispatch();
@@ -15,6 +16,10 @@ const ExplorePage = () => {
     dispatch(fetchCoins(page));
   }, [dispatch, page]);
 
+  const handleDragStart = (e, coin) => {
+    e.dataTransfer.setData('text/plain', JSON.stringify(coin));
+  };
+  
   if (status === 'loading') return <div>Loading...</div>;
   if (status === 'failed') return <div>Error: {error}</div>;
 
@@ -29,7 +34,7 @@ const ExplorePage = () => {
   };
 
   return (
-    <div className={`p-3 text-xs border-[2px] rounded-lg ${isDarkMode?"bg-gray-950 border-gray-600":"bg-gray-100 border-gray-400"}`}>
+    <div className={`p-3 text-xs border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600":"bg-gray-100 border-gray-400"}`}>
       <h1 className="text-xl font-bold md:text-left text-center mb-4">Explore</h1>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -40,14 +45,11 @@ const ExplorePage = () => {
               <th className="py-2 px-3 text-right">Balance</th>
               <th className="py-2 px-3 text-right">Price</th>
               <th className="py-2 px-3 text-right">Today</th>
-              <th className="py-2 px-3 text-right">7D</th>
-              <th className="py-2 px-3 text-right">30D</th>
-              <th className="py-2 px-3 text-right">1Y</th>
             </tr>
           </thead>
           <tbody className="text-gray-500 font-light">
             {coins.map((coin) => (
-              <tr key={coin.id} className={`${isDarkMode?"hover:bg-gray-900":"hover:bg-gray-200"} cursor-pointer`}>
+              <tr key={coin.id} draggable onDragStart={(e) => handleDragStart(e, coin)} className={`theme-transition ${isDarkMode?"hover:bg-gray-900":"hover:bg-gray-200"} cursor-pointer`}>
                 <td className="py-2 px-3 text-left whitespace-nowrap">
                   <Link href={`/coin/${coin.id}`} className="flex items-center group">
                     <img className="w-6 h-6 rounded-full mr-2" src={coin.image} alt={coin.name} />
@@ -62,33 +64,26 @@ const ExplorePage = () => {
                 <td className={`py-2 px-3 text-right ${coin.price_change_percentage_24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                   {formatPercentage(coin.price_change_percentage_24h)}
                 </td>
-                <td className={`py-2 px-3 text-right ${coin.price_change_percentage_7d >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {formatPercentage(coin.price_change_percentage_7d)}
-                </td>
-                <td className={`py-2 px-3 text-right ${coin.price_change_percentage_30d >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {formatPercentage(coin.price_change_percentage_30d)}
-                </td>
-                <td className={`py-2 px-3 text-right ${coin.price_change_percentage_1y >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {formatPercentage(coin.price_change_percentage_1y)}
-                </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <div className="mt-4 flex justify-between">
+      <div className="pt-2 flex justify-between border-t-[1px] border-gray-800">
         <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs disabled:bg-gray-600"
+          className="font-bold py-1 px-2 flex items-center rounded text-xs disabled:text-gray-400"
         >
+          <ArrowLeft/>
           Previous
         </button>
         <button
           onClick={() => setPage((prev) => prev + 1)}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded text-xs"
+          className="font-bold flex items-center py-1 px-2 rounded text-xs"
         >
           Next
+          <ArrowRight/>
         </button>
       </div>
     </div>

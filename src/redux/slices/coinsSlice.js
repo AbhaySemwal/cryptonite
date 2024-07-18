@@ -24,17 +24,28 @@ export const addToRecentlyViewed = createAsyncThunk(
   'coins/addToRecentlyViewed',
   async (coin, { getState }) => {
     const { coins } = getState();
-    let recentlyViewed = [...(coins.recentlyViewed || [])];
+    let recentlyViewed = [...coins.recentlyViewed];
     
     recentlyViewed = recentlyViewed.filter(c => c.id !== coin.id);
-    
     recentlyViewed.unshift(coin);
-    
     recentlyViewed = recentlyViewed.slice(0, 5);
     
-    localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
+    }
     
     return recentlyViewed;
+  }
+);
+
+export const initializeRecentlyViewed = createAsyncThunk(
+  'coins/initializeRecentlyViewed',
+  async () => {
+    if (typeof window !== 'undefined') {
+      const storedRecentlyViewed = localStorage.getItem('recentlyViewed');
+      return storedRecentlyViewed ? JSON.parse(storedRecentlyViewed) : [];
+    }
+    return [];
   }
 );
 
@@ -84,6 +95,9 @@ const coinsSlice = createSlice({
         state.error = action.error.message
       })
       .addCase(addToRecentlyViewed.fulfilled, (state, action) => {
+        state.recentlyViewed = action.payload;
+      })
+      .addCase(initializeRecentlyViewed.fulfilled, (state, action) => {
         state.recentlyViewed = action.payload;
       })
       .addCase(fetchTrendingCoins.pending, (state) => {

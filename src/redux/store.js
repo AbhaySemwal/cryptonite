@@ -4,6 +4,7 @@ import historicalDataReducer from './slices/historicalDataSlice';
 import homeReducer from './slices/homeSlice';
 import watchlistReducer from './slices/watchListSlice';
 import themeReducer, { setTheme } from './slices/themeSlice'
+import recentSearchesReducer from './slices/recentSearchesSlice';
 
 const store = configureStore({
   reducer: {
@@ -12,6 +13,7 @@ const store = configureStore({
     historicalData: historicalDataReducer,
     watchlist: watchlistReducer,
     theme: themeReducer,
+    recentSearches: recentSearchesReducer,
   },
 });
 

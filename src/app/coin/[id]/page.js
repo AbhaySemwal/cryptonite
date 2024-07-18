@@ -70,11 +70,11 @@ const CoinPage = () => {
     draggable
     onDragStart={handleDragStart}
      className="flex flex-col gap-5 mx-auto border-gray-400">
-      <div className={`p-2 md:p-3 border-2 ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
+      <div className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
         <h1 className="text-lg md:text-2xl text-center mb-8 font-semibold uppercase">{id}</h1>
         {historicalData ? <CoinPriceChart isDarkMode={isDarkMode} coinId={id} historicalData={formattedHistoricalData} /> : <div>Loading...</div>}
       </div>
-      <div className={`p-2 md:p-3 border-2 ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
+      <div className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
         <h2 className="text-lg md:text-2xl mb-4 text-center font-semibold">Price Change Percentages</h2>
         {coinData ? <CoinBarChart coinData={coinData} /> : <div>Loading...</div>}
       </div>
@@ -82,20 +82,20 @@ const CoinPage = () => {
       {coinData && (
         <>
           <div className='flex md:flex-row flex-col gap-5 justify-between'>
-            <div className={`w-full md:w-[48%] p-2 md:p-3 border-2 ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} rounded-lg text-xs md:text-sm`}>
+            <div className={`w-full md:w-[48%] p-2 md:p-3 border-2 theme-transition ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} rounded-lg text-xs md:text-sm`}>
               <h2 className="text-lg md:text-2xl font-semibold mb-4">Fundamentals</h2>
               <p className='py-1'><strong>Market Cap:</strong> {coinData.market_data.market_cap.usd}</p>
               <p className='py-1'><strong>Total Supply:</strong> {coinData.market_data.total_supply}</p>
               <p className='py-1'><strong>Max Supply:</strong> {coinData.market_data.max_supply}</p>
             </div>
-            <div className={`w-full md:w-[48%] p-2 md:p-3 border-2 ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} rounded-lg text-xs md:text-sm`}>
+            <div className={`w-full md:w-[48%] p-2 md:p-3 border-2 theme-transition ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} rounded-lg text-xs md:text-sm`}>
               <h2 className="text-lg md:text-2xl font-semibold mb-4">Coin Information</h2>
               <p className='py-1'><strong>Symbol:</strong> {coinData.symbol}</p>
               <p className='py-1'><strong>Current Price:</strong> {coinData.market_data.current_price.usd}</p>
               <p className='py-1'><strong>Total Volume:</strong> {coinData.market_data.total_volume.usd}</p>
             </div>
           </div>
-          <div className={`p-2 md:p-3 border-2 ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} rounded-lg mb-5`}>
+          <div className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} rounded-lg md:mb-5`}>
             <h2 className="text-lg md:text-2xl md:text-left text-center font-semibold mb-4">About {coinData.name}</h2>
             <p className='text-xs md:text-sm md:text-left text-center' dangerouslySetInnerHTML={{ __html: coinData.description.en }} />
           </div>
