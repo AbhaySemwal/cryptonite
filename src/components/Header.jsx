@@ -137,19 +137,23 @@ const Header = () => {
             )}
           </div>
           
-          <Link href="/explore" className={`flex items-center space-x-1 px-3 py-2 rounded-md transition-colors ${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'} text-white`}>
+          <Link href="/explore" className={`flex items-center space-x-1 px-2 py-1 rounded-md  theme-transition transition-colors ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-300 hover:bg-gray-400 text-gray-700'} `}>
             <ExploreOutlined />
-            <span>Explore</span>
+            <span className='text-sm font-semibold'>Explore</span>
           </Link>
           
-          <div className='cursor-pointer' onClick={handleThemeToggle}>
-            {isDarkMode ? <WbSunny /> : <Brightness2 />}
+          <div onClick={handleThemeToggle} className='cursor-pointer flex justify-between items-center relative p-1 gap-1.5 border-[1.5px] border-solid border-[#2f734a] rounded-2xl'>
+            <div className='text-[18px]'>🌙</div>
+            <div className='text-[18px]'>🌞</div>
+            <div className={`w-[24px] h-[24px] bg-[#15764f] rounded-full absolute transition-all duration-300 ${isDarkMode ? 'right-1' : 'left-1'}`}></div>
           </div>
         </div>
         
         <div className="md:hidden flex items-center space-x-2">
-          <div className='cursor-pointer' onClick={handleThemeToggle}>
-            {isDarkMode ? <WbSunny /> : <Brightness2 />}
+          <div onClick={handleThemeToggle} className='cursor-pointer flex justify-between items-center relative p-1 gap-1.5 border-[1.5px] border-solid border-[#2f734a] rounded-2xl'>
+            <div className='text-[15px]'>🌙</div>
+            <div className='text-[15px]'>🌞</div>
+            <div className={`w-[22px] h-[22px] bg-[#15764f] rounded-full absolute transition-all duration-300 ${isDarkMode ? 'right-1' : 'left-1'}`}></div>
           </div>
           <button onClick={toggleMobileMenu} className="p-2">
             <Menu />
@@ -205,7 +209,7 @@ const Header = () => {
             )}
           </div>
           
-          <Link href="/explore" className={`flex items-center space-x-1 px-3 py-2 rounded-md transition-colors ${isDarkMode ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'} text-white w-full justify-center`}>
+          <Link href="/explore" className={`flex items-center space-x-1 px-3 py-2 rounded-md transition-colors ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-300 hover:bg-gray-400 text-gray-700'} text-white w-full justify-center`}>
             <ExploreOutlined />
             <span>Explore</span>
           </Link>

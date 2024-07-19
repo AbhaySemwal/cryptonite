@@ -7,7 +7,7 @@ export const fetchCoins = createAsyncThunk('coins/fetchCoins', async (page) => {
     params: {
       vs_currency: 'usd',
       order: 'market_cap_desc',
-      per_page: 10,
+      per_page: 20,
       page,
       sparkline: false
     }

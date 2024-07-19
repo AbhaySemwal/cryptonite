@@ -5,10 +5,21 @@ import { useSelector, useDispatch } from 'react-redux';
 import Link from 'next/link';
 import { addToWatchlist, setWatchlist } from '@/redux/slices/watchListSlice';
 import { addToRecentlyViewed } from '@/redux/slices/coinsSlice';
+import { setTheme } from '@/redux/slices/themeSlice';
 
 const WatchList = () => {
   const dispatch = useDispatch();
-  const isDarkMode = useSelector((state) => state.theme.isDarkMode);
+  const [isDarkMode,setIsDarkMode]=useState(true);
+    const dm = useSelector((state) => state.theme.isDarkMode);
+    useEffect(() => {
+      if (typeof window !== 'undefined') {
+        const savedTheme = localStorage.getItem('isDarkMode');
+        setIsDarkMode(savedTheme !== null ? JSON.parse(savedTheme) : true)
+        if (savedTheme !== null) {
+          dispatch(setTheme(JSON.parse(savedTheme)));
+        }
+      }
+    }, [dispatch,dm]);
   const watchlist = useSelector((state) => state.watchlist) || [];
   const [showAll, setShowAll] = useState(false);
 
@@ -90,13 +101,13 @@ const WatchList = () => {
                   </Link>
                 </td>
                 <td className="py-2 px-3 text-right">
-                  ${coin.current_price?formatPrice(coin.current_price):parseFloat(coin?.data?.price).toFixed(8)}
+                  {coin.current_price?formatPrice(coin.current_price):"$"+parseFloat(coin?.data?.price).toFixed(8)}
                 </td>
                 <td className={`py-2 px-3 text-right ${(coin?.data?coin?.data?.price_change_percentage_24h.usd:coin?.price_change_percentage_24h.usd)>= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {coin.data?coin?.data.price_change_percentage_24h.usd.toFixed(2):formatPercentage(coin.price_change_percentage_24h)}%
+                  {coin.data?coin?.data.price_change_percentage_24h.usd.toFixed(2)+"%":formatPercentage(coin.price_change_percentage_24h)}
                 </td>
                 <td className="py-2 px-3 text-right">
-                  {coin?.data?coin?.data.market_cap:coin?.market_cap}
+                  {coin?.data?coin?.data.market_cap:("$"+coin?.market_cap)}
                 </td>
               </tr>
             ))}

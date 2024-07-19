@@ -67,7 +67,7 @@ const CoinPage = () => {
 
   return (
     <div
-    draggable
+    draggable={coinData?true:false}
     onDragStart={handleDragStart}
      className="flex flex-col gap-5 mx-auto border-gray-400">
       <div className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} rounded-lg`}>

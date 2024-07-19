@@ -20,8 +20,8 @@ const ExplorePage = () => {
     e.dataTransfer.setData('text/plain', JSON.stringify(coin));
   };
   
-  if (status === 'loading') return <div>Loading...</div>;
-  if (status === 'failed') return <div>Error: {error}</div>;
+  if (status === 'loading') return <div className={`p-3 border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600":"bg-gray-100 border-gray-400"}`}>Loading...</div>;
+  if (status === 'failed') return <div className={`p-3 border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600":"bg-gray-100 border-gray-400"}`}>Error: {error}</div>;
 
   const formatPercentage = (value) => {
     if (value === undefined || value === null) return 'N/A';
