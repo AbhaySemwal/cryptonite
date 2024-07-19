@@ -47,6 +47,7 @@ const CoinBarChart = ({ coinData }) => {
         data: barChartData,
         options: {
           responsive: true,
+          maintainAspectRatio: false, // Make chart responsive
           scales: {
             x: {
               title: {
@@ -83,7 +84,9 @@ const CoinBarChart = ({ coinData }) => {
     };
   }, [coinData]);
 
-  return <canvas ref={barChartRef} />;
+  return <div className="relative w-full min-h-[400px]"> {/* Ensure container height for responsiveness */}
+        <canvas ref={barChartRef} />
+      </div>;
 };
 
 export default CoinBarChart;

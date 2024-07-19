@@ -142,7 +142,7 @@ const Header = () => {
             <span className='text-sm font-semibold'>Explore</span>
           </Link>
           
-          <div onClick={handleThemeToggle} className='cursor-pointer flex justify-between items-center relative p-1 gap-1.5 border-[1.5px] border-solid border-[#2f734a] rounded-2xl'>
+          <div onClick={handleThemeToggle} className='cursor-pointer flex justify-between items-center relative p-1 gap-3 border-[1.5px] border-solid border-[#2f734a] rounded-3xl'>
             <div className='text-[18px]'>🌙</div>
             <div className='text-[18px]'>🌞</div>
             <div className={`w-[24px] h-[24px] bg-[#15764f] rounded-full absolute transition-all duration-300 ${isDarkMode ? 'right-1' : 'left-1'}`}></div>
@@ -150,10 +150,10 @@ const Header = () => {
         </div>
         
         <div className="md:hidden flex items-center space-x-2">
-          <div onClick={handleThemeToggle} className='cursor-pointer flex justify-between items-center relative p-1 gap-1.5 border-[1.5px] border-solid border-[#2f734a] rounded-2xl'>
+          <div onClick={handleThemeToggle} className='cursor-pointer flex justify-between items-center relative p-1 gap-2 border-[1.5px] border-solid border-[#2f734a] rounded-2xl'>
             <div className='text-[15px]'>🌙</div>
             <div className='text-[15px]'>🌞</div>
-            <div className={`w-[22px] h-[22px] bg-[#15764f] rounded-full absolute transition-all duration-300 ${isDarkMode ? 'right-1' : 'left-1'}`}></div>
+            <div className={`w-[20px] h-[20px] bg-[#15764f] rounded-full absolute transition-all duration-300 ${isDarkMode ? 'right-1' : 'left-1'}`}></div>
           </div>
           <button onClick={toggleMobileMenu} className="p-2">
             <Menu />
