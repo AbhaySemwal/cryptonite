@@ -131,7 +131,7 @@ const CoinPage = () => {
   const displayedPrice = livePrice || (coinData && coinData.market_data.current_price.usd);
 
   return (
-    <div className="flex flex-col gap-5 mx-auto border-gray-400">
+    <div className="flex flex-col gap-5 mx-auto border-gray-400 md:mb-5">
       <div className={`p-2 md:p-3 border-2 theme-transition justify-between ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
         <div className='flex-col gap-3 md:flex-row flex justify-between items-center py-3'>
           <div
@@ -158,12 +158,12 @@ const CoinPage = () => {
         </div>}
         {historicalData ? <CoinPriceChart isDarkMode={isDarkMode} coinId={id} historicalData={formattedHistoricalData} /> : <div>Loading...</div>}
       </div>
-      <div className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
+      <div draggable onDragStart={handleDragStart} className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
         <h2 className="text-lg md:text-xl mb-4 text-center md:text-left font-semibold">Price Change Percentages</h2>
         {coinData ? <CoinBarChart isDarkMode={isDarkMode} coinData={coinData} /> : <div>Loading...</div>}
       </div>
-      {coinData && (
-        <div draggable onDragStart={handleDragStart} className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg md:mb-5`}>
+      {coinData?.description?.en && (
+        <div draggable onDragStart={handleDragStart} className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
           <h2 className="text-lg md:text-xl md:text-left text-center font-semibold mb-4">About {coinData.name}</h2>
           <p className='text-xs md:text-sm md:text-left text-center' dangerouslySetInnerHTML={{ __html: coinData.description.en }} />
         </div>
