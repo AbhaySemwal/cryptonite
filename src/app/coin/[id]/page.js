@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef} from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'next/navigation';
 import { fetchCoinDetails, addToRecentlyViewed } from '@/redux/slices/coinsSlice';
@@ -23,7 +23,7 @@ const LivePriceDisplay = React.memo(({ price }) => (
     <p className='font-semibold md:text-lg'>{formatPrice(price)}</p>
   </div>
 ));
-
+LivePriceDisplay.displayName = 'LivePriceDisplay';
 const CoinPage = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
