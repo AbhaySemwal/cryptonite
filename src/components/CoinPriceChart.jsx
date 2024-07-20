@@ -49,6 +49,8 @@ const CoinPriceChart = ({ isDarkMode,coinId, historicalData }) => {
               label: 'Price',
               data: filteredData.map(d => d.price),
               borderColor: 'rgb(75, 192, 192)',
+              backgroundColor: 'rgba(75, 192, 192, 0.2)',
+              fill: true,
               tension: 0.4,
               borderWidth: 1.5,
               pointRadius: 0,
@@ -56,7 +58,7 @@ const CoinPriceChart = ({ isDarkMode,coinId, historicalData }) => {
           },
           options: {
             responsive: true,
-            maintainAspectRatio: false, 
+            maintainAspectRatio: false,
             scales: {
               x: {
                 type: 'time',
@@ -70,21 +72,54 @@ const CoinPriceChart = ({ isDarkMode,coinId, historicalData }) => {
                 },
                 title: {
                   display: true,
-                  text: 'Date'
+                  text: 'Date',
+                  color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
+                },
+                grid: {
+                  color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                  drawBorder: false,
+                  drawOnChartArea: true
+                },
+                ticks: {
+                  color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
                 }
               },
               y: {
                 beginAtZero: false,
+                ticks: {
+                  callback: function(value, index, values) {
+                    if (value >= 1000000) {
+                      return (value / 1000000).toFixed(1) + 'M';
+                    } else if (value >= 1000) {
+                      return (value / 1000).toFixed(1) + 'k';
+                    } else {
+                      return value.toFixed(0);
+                    }
+                  },
+                  color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
+                },
                 title: {
                   display: true,
-                  text: 'Price (USD)'
+                  text: 'Price (USD)',
+                  color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
+                },
+                grid: {
+                  color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                  drawBorder: false,
+                  drawOnChartArea: true
                 }
               }
             },
             plugins: {
+              legend: {
+                labels: {
+                  color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
+                }
+              },
               title: {
                 display: true,
-                text: `${coinId.toUpperCase()} Price - ${timeRange}`
+                text: `${coinId.toUpperCase()} Price - ${timeRange}`,
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
               },
               tooltip: {
                 mode: 'index',
@@ -96,6 +131,7 @@ const CoinPriceChart = ({ isDarkMode,coinId, historicalData }) => {
         });
       }
     };
+
 
     createChart();
 
@@ -116,7 +152,7 @@ const CoinPriceChart = ({ isDarkMode,coinId, historicalData }) => {
       <div className="relative w-full min-h-[400px]"> {/* Ensure container height for responsiveness */}
         <canvas ref={chartRef} />
       </div>
-      <div className={`${isDarkMode?"text-white":"text-black"} flex justify-center gap-2 text-xs py-2`}>
+      <div className={`${isDarkMode?"text-white":"text-black"} flex flex-col md:flex-row justify-center gap-2 text-xs py-2`}>
         <button onClick={() => handleTimeRangeChange('24h')} className={`theme-transition ${isDarkMode? timeRange==='24h'?"bg-gray-600":"bg-gray-800":timeRange==='24h'?"bg-gray-400":"bg-gray-300"} py-1 px-2 rounded-md`}>24h</button>
         <button onClick={() => handleTimeRangeChange('7d')} className={`theme-transition ${isDarkMode? timeRange==='7d'?"bg-gray-600":"bg-gray-800":timeRange==='7d'?"bg-gray-400":"bg-gray-300"} py-1 px-2 rounded-md`}>7d</button>
         <button onClick={() => handleTimeRangeChange('30d')} className={`theme-transition ${isDarkMode? timeRange==='30d'?"bg-gray-600":"bg-gray-800":timeRange==='30d'?"bg-gray-400":"bg-gray-300"} py-1 px-2 rounded-md`}>30d</button>

@@ -55,6 +55,8 @@ const LineChart = () => {
       if (chartInstanceRef.current) {
         chartInstanceRef.current.destroy();
       }
+      const textColor = isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)';
+      const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
 
       chartInstanceRef.current = new Chart(ctx, {
         type: 'line',
@@ -73,7 +75,8 @@ const LineChart = () => {
         },
         options: {
           responsive: true,
-          maintainAspectRatio: false, // Make chart responsive
+          maintainAspectRatio: false,
+          color: textColor, // Set default text color
           scales: {
             x: {
               type: 'time',
@@ -82,28 +85,60 @@ const LineChart = () => {
               },
               title: {
                 display: true,
-                text: 'Date'
-              }
+                text: 'Date',
+                color: textColor,
+              },
+              grid: {
+                color: gridColor,
+                drawOnChartArea: true,
+              },
+              ticks: {
+                color: textColor,
+              },
             },
             y: {
               title: {
                 display: true,
-                text: 'Price (USD)'
+                text: 'Price (USD)',
+                color: textColor,
               },
-              beginAtZero: false
+              beginAtZero: false,
+              grid: {
+                color: gridColor,
+                drawOnChartArea: true,
+              },
+              ticks: {
+                color: textColor,
+                callback: function(value, index, values) {
+                  if (value >= 1000000) {
+                    return (value / 1000000).toFixed(1) + 'M';
+                  } else if (value >= 1000) {
+                    return (value / 1000).toFixed(1) + 'k';
+                  } else {
+                    return value.toFixed(0);
+                  }
+                }
+              }
             }
           },
           plugins: {
             title: {
               display: true,
-              text: `Cryptocurrency Prices - ${timeRange}`
+              text: `Cryptocurrency Prices - ${timeRange}`,
+              color: textColor,
             },
             legend: {
-              display: true
+              display: true,
+              labels: {
+                color: textColor,
+              },
             },
             tooltip: {
               mode: 'index',
-              intersect: false
+              intersect: false,
+              titleColor: textColor,
+              bodyColor: textColor,
+              backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)',
             }
           }
         }
@@ -116,8 +151,8 @@ const LineChart = () => {
         chartInstanceRef.current = null;
       }
     };
-  }, [data, status, timeRange]);
-
+  }, [data, status, timeRange, isDarkMode]);
+  
   const handleTimeRangeChange = (range) => {
     setTimeRange(range);
   };

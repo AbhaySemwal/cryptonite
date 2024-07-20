@@ -4,12 +4,15 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTrendingCoins } from '../redux/slices/coinsSlice';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+// import { formatPrice } from './FormatPrice';
 
 const TrendingMarket = () => {
   const dispatch = useDispatch();
   const isDarkMode = useSelector((state) => state.theme.isDarkMode)
   const { trendingCoins, trendingStatus, trendingError } = useSelector((state) => state.coins);
   const [showAll, setShowAll] = useState(false);
+  const router=useRouter();
 
   const handleDragStart = (e, coin) => {
     e.dataTransfer.setData('text/plain', JSON.stringify(coin));
@@ -33,19 +36,25 @@ const TrendingMarket = () => {
     </div>;
   }
 
-  const formatPrice = (price) => {
+  const format = (price) => {
     if (typeof price === 'number') {
       return `$${price.toFixed(8)}`;
     }
     return price || 'N/A';
   };
-
+  const formatPrice = (value) => {
+    if (value === undefined || value === null) return 'N/A';
+    return '$' + value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 });
+  };
   const formatPercentage = (changeObj) => {
     if (changeObj && typeof changeObj.usd === 'number') {
       return `${changeObj.usd.toFixed(2)}%`;
     }
     return 'N/A';
   };
+  const handleClick=(id)=>{
+    router.push("/coin/"+id);
+  }
 
   const displayedCoins = showAll ? trendingCoins : trendingCoins.slice(0, 5);
   
@@ -65,17 +74,17 @@ const TrendingMarket = () => {
           </thead>
           <tbody className="text-gray-500 font-light">
             {displayedCoins.map((coin) => (
-              <tr key={coin.id} draggable onDragStart={(e) => handleDragStart(e, coin)} className={`${isDarkMode?"hover:bg-gray-900":"hover:bg-gray-200"} cursor-pointer`}>
+              <tr key={coin.id} onClick={()=>handleClick(coin.id)}  draggable onDragStart={(e) => handleDragStart(e, coin)} className={`${isDarkMode?"hover:bg-gray-900":"hover:bg-gray-200"} cursor-pointer`}>
                 <td className="py-2 px-3 text-left whitespace-nowrap">
-                  <Link href={`/coin/${coin.id}`} className="flex items-center group">
+                  <div className="flex items-center group">
                     <img className="w-6 h-6 rounded-full mr-2" src={coin.large} alt={coin.name} />
                     <span className="font-medium text-blue-400 group-hover:text-blue-300">
                       {coin.symbol.toUpperCase()}
                     </span>
-                  </Link>
+                  </div>
                 </td>
                 <td className="py-2 px-3 text-left">{coin.symbol}</td>
-                <td className="py-2 px-3 text-right">{formatPrice(coin.data?.price)}</td>
+                <td className="py-2 px-3 text-right">{(formatPrice((coin.data?.price)))}</td>
                 <td className={`py-2 px-3 text-right ${coin.data?.price_change_percentage_24h?.usd >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                   {formatPercentage(coin.data?.price_change_percentage_24h)}
                 </td>

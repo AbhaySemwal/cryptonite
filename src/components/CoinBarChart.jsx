@@ -5,7 +5,7 @@ import { Chart, BarController, BarElement, CategoryScale, LinearScale, Title, To
 
 Chart.register(BarController, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend);
 
-const CoinBarChart = ({ coinData }) => {
+const CoinBarChart = ({isDarkMode, coinData }) => {
   const barChartRef = useRef(null);
   const chartInstanceRef = useRef(null);
 
@@ -24,9 +24,9 @@ const CoinBarChart = ({ coinData }) => {
               coinData.market_data.price_change_percentage_30d,
             ],
             backgroundColor: [
-              'rgba(255, 99, 132, 0.2)',
-              'rgba(54, 162, 235, 0.2)',
-              'rgba(75, 192, 192, 0.2)',
+              'rgba(255, 99, 132, 0.6)',
+              'rgba(54, 162, 235, 0.6)',
+              'rgba(75, 192, 192, 0.6)',
             ],
             borderColor: [
               'rgba(255, 99, 132, 1)',
@@ -42,34 +42,63 @@ const CoinBarChart = ({ coinData }) => {
         chartInstanceRef.current.destroy();
       }
 
+      const textColor = isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)';
+
       chartInstanceRef.current = new Chart(ctx, {
         type: 'bar',
         data: barChartData,
         options: {
           responsive: true,
-          maintainAspectRatio: false, // Make chart responsive
+          maintainAspectRatio: false,
+          color: textColor, // Set default text color
           scales: {
             x: {
               title: {
                 display: true,
                 text: 'Time Period',
+                color: textColor,
+              },
+              grid: {
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                drawOnChartArea: true,
+              },
+              ticks: {
+                color: textColor,
               },
             },
             y: {
               title: {
                 display: true,
                 text: 'Price Change (%)',
+                color: textColor,
               },
               beginAtZero: true,
+              grid: {
+                color: isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)',
+                drawOnChartArea: true,
+              },
+              ticks: {
+                color: textColor,
+              },
             },
           },
           plugins: {
             legend: {
+              labels: {
+                color: textColor,
+              },
+            },
+            title: {
               display: true,
+              text: 'Price Change Percentage',
+              color: textColor,
             },
             tooltip: {
               mode: 'index',
               intersect: false,
+              titleColor: textColor,
+              bodyColor: textColor,
+              backgroundColor: isDarkMode ? 'rgba(0, 0, 0, 0.8)' : 'rgba(255, 255, 255, 0.8)',
             },
           },
         },
@@ -82,7 +111,7 @@ const CoinBarChart = ({ coinData }) => {
         chartInstanceRef.current = null;
       }
     };
-  }, [coinData]);
+  }, [coinData, isDarkMode]);
 
   return <div className="relative w-full min-h-[400px]"> {/* Ensure container height for responsiveness */}
         <canvas ref={barChartRef} />

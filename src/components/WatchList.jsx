@@ -50,7 +50,7 @@ const WatchList = () => {
   if (watchlist.length === 0) {
     return (
       <div 
-        className={`mb-5 theme-transition p-3 border-[2px] rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"} min-h-[200px] flex items-center justify-center`}
+        className={`mb-5 theme-transition p-3 border-[2px] text-center rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"} min-h-[200px] flex items-center justify-center`}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
       >
@@ -103,11 +103,11 @@ const WatchList = () => {
                 <td className="py-2 px-3 text-right">
                   {coin.current_price?formatPrice(coin.current_price):"$"+parseFloat(coin?.data?.price).toFixed(8)}
                 </td>
-                <td className={`py-2 px-3 text-right ${(coin?.data?coin?.data?.price_change_percentage_24h.usd:coin?.price_change_percentage_24h.usd)>= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {coin.data?coin?.data.price_change_percentage_24h.usd.toFixed(2)+"%":formatPercentage(coin.price_change_percentage_24h)}
+                <td className={`py-2 px-3 text-right ${(coin?.data?Number(coin?.data?.price_change_percentage_24h.usd):Number(coin?.price_change_percentage_24h.usd))>=0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {coin.data?formatPercentage(coin?.data.price_change_percentage_24h.usd):formatPercentage(coin.price_change_percentage_24h)}
                 </td>
                 <td className="py-2 px-3 text-right">
-                  {coin?.data?coin?.data.market_cap:("$"+coin?.market_cap)}
+                  {coin?.data?coin?.data.market_cap:formatPrice(coin?.market_cap)}
                 </td>
               </tr>
             ))}

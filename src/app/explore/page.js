@@ -59,7 +59,7 @@ const ExplorePage = () => {
                   </Link>
                 </td>
                 <td className="py-2 px-3 text-right">{formatPrice(coin.market_cap)}</td>
-                <td className="py-2 px-3 text-right">{coin.circulating_supply?.toLocaleString() || 'N/A'}</td>
+                <td className="py-2 px-3 text-right">${coin.circulating_supply?.toLocaleString() || 'N/A'}</td>
                 <td className="py-2 px-3 text-right">{formatPrice(coin.current_price)}</td>
                 <td className={`py-2 px-3 text-right ${coin.price_change_percentage_24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
                   {formatPercentage(coin.price_change_percentage_24h)}
