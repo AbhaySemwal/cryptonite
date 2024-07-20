@@ -3,21 +3,35 @@
 import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToRecentlyViewed, fetchCoinDetails, initializeRecentlyViewed } from '@/redux/slices/coinsSlice';
+import { addToRecentlyViewed, fetchCoinDetails, initializeRecentlyViewed, removeFromRecentlyViewed } from '@/redux/slices/coinsSlice';
+import { Close as CloseIcon, Delete } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
+import { setTheme } from '@/redux/slices/themeSlice';
 
 const RecentlyViewed = () => {
   const dispatch = useDispatch();
   const [showAll, setShowAll] = useState(false);
-  const isDarkMode = useSelector((state) => state.theme.isDarkMode);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const dm = useSelector((state) => state.theme.isDarkMode);
   const { recentlyViewed, coinDetails } = useSelector((state) => state.coins);
   const [isLoading, setIsLoading] = useState(true);
+  const router = useRouter();
 
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('isDarkMode');
+      setIsDarkMode(savedTheme !== null ? JSON.parse(savedTheme) : true)
+      if (savedTheme !== null) {
+        dispatch(setTheme(JSON.parse(savedTheme)));
+      }
+    }
+  }, [dispatch, dm]);
   useEffect(() => {
     dispatch(initializeRecentlyViewed()).then(() => setIsLoading(false));
   }, [dispatch]);
 
   useEffect(() => {
-    recentlyViewed.forEach(coin => {
+    recentlyViewed.forEach((coin) => {
       if (!coinDetails[coin.id]) {
         dispatch(fetchCoinDetails(coin.id));
       }
@@ -25,16 +39,26 @@ const RecentlyViewed = () => {
   }, [recentlyViewed, dispatch, coinDetails]);
 
   if (recentlyViewed.length === 0) {
-    return(
-      <div className={`p-3 text-center border-[2px] rounded-lg ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"}`}>
+    return (
+      <div className={`p-3 text-center border-[2px] rounded-lg theme-transition ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"}`}>
         No recently viewed cryptocurrencies.
       </div>
     );
   }
+
+  const handleRemoveCoin = (coinId, e) => {
+    e.stopPropagation();
+    dispatch(removeFromRecentlyViewed(coinId));
+  };
+
+  const handleClick = (id) => {
+    router.push("/coin/" + id);
+  };
+
   const displayedCoins = showAll ? recentlyViewed : recentlyViewed.slice(0, 5);
-  
+
   return (
-    <div className={`theme-transition p-3 text-xs border-[2px] rounded-lg ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"}`}>
+    <div className={`theme-transition p-3 text-xs border-[2px] rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"}`}>
       <h2 className="text-xl font-bold mb-4 text-center md:text-left">Recently Viewed</h2>
       <div className="overflow-x-auto">
         <table className="w-full">
@@ -44,20 +68,21 @@ const RecentlyViewed = () => {
               <th className="py-2 px-3 text-right">Rank</th>
               <th className="py-2 px-3 text-right">Genesis Date</th>
               <th className="py-2 px-3 text-right">Current Price</th>
+              {/* <th className="py-2 px-3 text-right">Actions</th> */}
             </tr>
           </thead>
           <tbody className="text-gray-500 font-light">
             {displayedCoins.map((coin) => {
               const currentData = coinDetails[coin.id];
               return (
-                <tr key={coin.id} className={`${isDarkMode?"hover:bg-gray-900":"hover:bg-gray-200"} cursor-pointer`}>
+                <tr key={coin.id} onClick={() => handleClick(coin.id)} className={` ${isDarkMode ? "hover:bg-gray-900" : "hover:bg-gray-200"} cursor-pointer`}>
                   <td className="py-2 px-3 text-left whitespace-nowrap">
-                    <Link href={`/coin/${coin.id}`} className="flex items-center group">
+                    <div className="flex items-center group">
                       <img className="w-6 h-6 rounded-full mr-2" src={coin.image} alt={coin.name} />
                       <span className="font-medium text-blue-400 group-hover:text-blue-300">
                         {coin.symbol.toUpperCase()}
                       </span>
-                    </Link>
+                    </div>
                   </td>
                   <td className="py-2 px-3 text-right">
                     {coin.market_cap_rank}
@@ -68,6 +93,14 @@ const RecentlyViewed = () => {
                   <td className="py-2 px-3 text-right">
                     {currentData ? `$${currentData.market_data.current_price.usd.toLocaleString()}` : 'Loading...'}
                   </td>
+                  <td className='py-2 text-right'>
+                    <button
+                      onClick={(e) => handleRemoveCoin(coin.id, e)}
+                      className={`flex items-center justify-center font-semibold rounded-full theme-transition ${isDarkMode ? 'text-gray-700 hover:text-gray-600' : 'text-gray-500 hover:text-gray-600'}`}
+                    >
+                      <Delete />
+                    </button>
+                  </td>
                 </tr>
               );
             })}
@@ -76,11 +109,11 @@ const RecentlyViewed = () => {
         {displayedCoins.length > 5 && (
           <div
             onClick={() => setShowAll(!showAll)}
-            className={`w-full text-center mt-2 font-bold py-1.5 px-2 rounded text-xs cursor-pointer ${isDarkMode?"text-white bg-gray-900":"text-black bg-gray-200"}`}
+            className={`w-full text-center mt-2 font-bold py-1.5 px-2 rounded text-xs cursor-pointer theme-transition ${isDarkMode ? "text-white bg-gray-900" : "text-black bg-gray-200"}`}
           >
             {showAll ? 'Show Less' : 'View More'}
-        </div>
-      )}
+          </div>
+        )}
       </div>
     </div>
   );

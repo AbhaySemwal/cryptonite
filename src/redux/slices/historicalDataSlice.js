@@ -1,30 +1,32 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import api from '@/lib/axios';
+import { fetchWithCache } from '@/lib/api';
+
 const API_URL = 'https://api.coingecko.com/api/v3';
-const API_KEY = 'CG-YAT6Xo52tQ3uFMoytsczBi1u';
 
-export const fetchHistoricalData = createAsyncThunk('historicalData/fetchHistoricalData', async () => {
-  const coins = ['bitcoin', 'ethereum', 'binancecoin'];
-  const days = '30'; // Fetch data for the last 30 days
-  const promises = coins.map((coin) =>
-    api.get(`${API_URL}/coins/${coin}/market_chart`, 
-      {
-      params: {
-        vs_currency: 'usd',
-        days: days,
-        api_key: API_KEY
-      },
-    })
-  );
+// Async thunk to fetch historical data
+export const fetchHistoricalData = createAsyncThunk(
+  'historicalData/fetchHistoricalData',
+  async ({ coins, days }, { rejectWithValue }) => {
+    try {
+      const promises = coins.map((coin) =>
+        fetchWithCache(`${API_URL}/coins/${coin}/market_chart`, {
+          vs_currency: 'usd',
+          days: days,
+        })
+      );
 
-  const responses = await Promise.all(promises);
-  const data = responses.map((response, index) => ({
-    name: coins[index],
-    prices: response.data.prices,
-  }));
+      const responses = await Promise.all(promises);
+      const data = responses.map((response, index) => ({
+        name: coins[index],
+        prices: response.prices,
+      }));
 
-  return data;
-});
+      return data;
+    } catch (error) {
+      return rejectWithValue(error.message);
+    }
+  }
+);
 
 const historicalDataSlice = createSlice({
   name: 'historicalData',
@@ -45,7 +47,7 @@ const historicalDataSlice = createSlice({
       })
       .addCase(fetchHistoricalData.rejected, (state, action) => {
         state.status = 'failed';
-        state.error = action.error.message;
+        state.error = action.payload;
       });
   },
 });

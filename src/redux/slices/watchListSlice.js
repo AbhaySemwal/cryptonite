@@ -8,7 +8,12 @@ const watchlistSlice = createSlice({
       return action.payload;
     },
     addToWatchlist: (state, action) => {
-      if (!state.some(coin => coin.id === action.payload.id)) {
+      const index = state.findIndex(coin => coin.id === action.payload.id);
+      if (index !== -1) {
+        // If the coin already exists, update its data
+        state[index] = { ...state[index], ...action.payload };
+      } else {
+        // If it's a new coin, add it to the watchlist
         state.push(action.payload);
       }
     },

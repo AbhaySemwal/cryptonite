@@ -1,6 +1,5 @@
-// lib/cache.js
 const cache = {};
-const DEFAULT_EXPIRATION = 15 * 60 * 1000; // 15 minutes
+const DEFAULT_EXPIRATION = 15 * 60 * 1000;
 
 export const getCachedData = (key) => {
   const cached = cache[key];

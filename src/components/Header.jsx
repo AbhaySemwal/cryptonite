@@ -162,18 +162,18 @@ const Header = () => {
       </div>
       
       {showMobileMenu && (
-        <div className={`md:hidden mt-3 ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} rounded-md p-3`}>
+        <div className={`md:hidden mt-3 theme-transition ${isDarkMode ? 'bg-gray-800' : 'bg-gray-100'} rounded-md p-3`}>
           <div ref={searchRef} className={`relative flex items-center w-full gap-1 pl-1.5 border-[1px] theme-transition ${isDarkMode ? 'border-gray-600 bg-gray-700' : 'bg-white border-gray-300'} rounded-md mb-3`}>
             <span className={isDarkMode ? 'text-gray-400' : 'text-gray-600'}><Search/></span>
             <input
-              className={`outline-none rounded-r-md p-1.5 w-full text-sm placeholder:text-sm bg-transparent ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
+              className={`outline-none rounded-r-md p-1.5 w-full text-sm placeholder:text-sm bg-transparent  ${isDarkMode ? 'text-white' : 'text-gray-900'}`}
               placeholder='Search...'
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               onFocus={handleSearchFocus}
             />
             {showDropdown && (
-              <div className={`theme-transition absolute text-xs top-full left-0 w-full mt-1 ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-300'} border rounded-md shadow-lg z-10`}>
+              <div className={`theme-transition absolute text-xs top-full left-0 w-full mt-1 theme-transition ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-300'} border rounded-md shadow-lg z-10`}>
                 {searchTerm === '' ? (
                   <>
                     {recentSearches.length > 0 && (
@@ -209,7 +209,7 @@ const Header = () => {
             )}
           </div>
           
-          <Link href="/explore" className={`flex items-center space-x-1 px-3 py-2 rounded-md transition-colors ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-300 hover:bg-gray-400 text-gray-700'} text-white w-full justify-center`}>
+          <Link href="/explore" className={`flex items-center space-x-1 px-3 py-2 rounded-md theme-transition transition-colors ${isDarkMode ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gray-300 hover:bg-gray-400 text-gray-700'} w-full justify-center`}>
             <ExploreOutlined />
             <span>Explore</span>
           </Link>

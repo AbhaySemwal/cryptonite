@@ -1,23 +1,23 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { fetchWithCache } from '@/lib/api';
 
 // Async thunk for fetching global market cap data
 export const fetchGlobalMarketCap = createAsyncThunk(
   'home/fetchGlobalMarketCap',
   async (_, { rejectWithValue }) => {
     try {
-      const response = await axios.get('https://api.coingecko.com/api/v3/global');
-      const marketCapData = response.data.data.total_market_cap;
+      const response = await fetchWithCache('https://api.coingecko.com/api/v3/global');
+      const marketCapData = response.data.total_market_cap;
       
       // Convert the data to the format expected by the chart
-      const formattedData = Object.entries(marketCapData).map(([date, value]) => ({
-        date: new Date(date).toISOString().split('T')[0],
+      const formattedData = Object.entries(marketCapData).map(([currency, value]) => ({
+        currency,
         marketCap: value
       }));
 
       return formattedData;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.message);
     }
   }
 );
@@ -42,7 +42,7 @@ export const fetchPublicCompaniesHoldings = createAsyncThunk(
       
       return mockData;
     } catch (error) {
-      return rejectWithValue(error.response.data);
+      return rejectWithValue(error.message);
     }
   }
 );

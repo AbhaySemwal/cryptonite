@@ -18,7 +18,9 @@ const LineChart = () => {
 
   useEffect(() => {
     if (status === 'idle') {
-      dispatch(fetchHistoricalData());
+      const coins = ['bitcoin', 'ethereum', 'binancecoin', 'cardano'];
+      const days = '30';
+      dispatch(fetchHistoricalData({ coins, days }));
     }
   }, [status, dispatch]);
 

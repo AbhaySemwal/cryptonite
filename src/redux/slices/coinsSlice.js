@@ -1,24 +1,20 @@
-// redux/slices/coinsSlice.js
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import api from '@/lib/axios'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { fetchWithCache } from '@/lib/api';
 
 export const fetchCoins = createAsyncThunk('coins/fetchCoins', async (page) => {
-  const response = await api.get(`https://api.coingecko.com/api/v3/coins/markets`, {
-    params: {
-      vs_currency: 'usd',
-      order: 'market_cap_desc',
-      per_page: 20,
-      page,
-      sparkline: false
-    }
-  })
-  return response.data
-})
+  const params = {
+    vs_currency: 'usd',
+    order: 'market_cap_desc',
+    per_page: 20,
+    page,
+    sparkline: false
+  };
+  return await fetchWithCache('/coins/markets', params);
+});
 
 export const fetchCoinDetails = createAsyncThunk('coins/fetchCoinDetails', async (id) => {
-  const response = await api.get(`https://api.coingecko.com/api/v3/coins/${id}`)
-  return response.data
-})
+  return await fetchWithCache(`/coins/${id}`);
+});
 
 export const addToRecentlyViewed = createAsyncThunk(
   'coins/addToRecentlyViewed',
@@ -28,7 +24,20 @@ export const addToRecentlyViewed = createAsyncThunk(
     
     recentlyViewed = recentlyViewed.filter(c => c.id !== coin.id);
     recentlyViewed.unshift(coin);
-    recentlyViewed = recentlyViewed.slice(0, 5);
+    
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
+    }
+    
+    return recentlyViewed;
+  }
+);
+
+export const removeFromRecentlyViewed = createAsyncThunk(
+  'coins/removeFromRecentlyViewed',
+  async (coinId, { getState }) => {
+    const { coins } = getState();
+    let recentlyViewed = coins.recentlyViewed.filter(coin => coin.id !== coinId);
     
     if (typeof window !== 'undefined') {
       localStorage.setItem('recentlyViewed', JSON.stringify(recentlyViewed));
@@ -52,8 +61,8 @@ export const initializeRecentlyViewed = createAsyncThunk(
 export const fetchTrendingCoins = createAsyncThunk(
   'coins/fetchTrendingCoins',
   async () => {
-    const response = await api.get('https://api.coingecko.com/api/v3/search/trending');
-    return response.data.coins.map(item => item.item);
+    const data = await fetchWithCache('/search/trending');
+    return data.coins.map(item => item.item);
   }
 );
 
@@ -73,28 +82,31 @@ const coinsSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchCoins.pending, (state) => {
-        state.status = 'loading'
+        state.status = 'loading';
       })
       .addCase(fetchCoins.fulfilled, (state, action) => {
-        state.status = 'succeeded'
-        state.coins = action.payload
+        state.status = 'succeeded';
+        state.coins = action.payload;
       })
       .addCase(fetchCoins.rejected, (state, action) => {
-        state.status = 'failed'
-        state.error = action.error.message
+        state.status = 'failed';
+        state.error = action.error.message;
       })
       .addCase(fetchCoinDetails.pending, (state) => {
-        state.status = 'loading'
+        state.status = 'loading';
       })
       .addCase(fetchCoinDetails.fulfilled, (state, action) => {
-        state.status = 'succeeded'
-        state.coinDetails[action.payload.id] = action.payload
+        state.status = 'succeeded';
+        state.coinDetails[action.payload.id] = action.payload;
       })
       .addCase(fetchCoinDetails.rejected, (state, action) => {
-        state.status = 'failed'
-        state.error = action.error.message
+        state.status = 'failed';
+        state.error = action.error.message;
       })
       .addCase(addToRecentlyViewed.fulfilled, (state, action) => {
+        state.recentlyViewed = action.payload;
+      })
+      .addCase(removeFromRecentlyViewed.fulfilled, (state, action) => {
         state.recentlyViewed = action.payload;
       })
       .addCase(initializeRecentlyViewed.fulfilled, (state, action) => {
@@ -112,6 +124,6 @@ const coinsSlice = createSlice({
         state.trendingError = action.error.message;
       });
   }
-})
+});
 
-export default coinsSlice.reducer
+export default coinsSlice.reducer;

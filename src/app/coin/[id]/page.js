@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState, useMemo, useCallback, useRef} from 'react';
+import React, { useEffect, useState, useMemo, useCallback, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'next/navigation';
 import { fetchCoinDetails, addToRecentlyViewed } from '@/redux/slices/coinsSlice';
@@ -10,20 +10,36 @@ import { setTheme } from '@/redux/slices/themeSlice';
 import Image from 'next/image';
 import LivePriceService from '@/services/LivePriceService';
 import PubSub from '@/services/PubSub';
+import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
+import useIsSmallScreen from '@/hooks/useIsSmallScreen';
 
-const formatPrice = (value) => {
-  if (value === undefined || value === null) return 'N/A';
-  const numValue = Number(value);
-  return isNaN(numValue) ? 'N/A' : '$' + numValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const kMB = (value) => {
+  if (value >= 1000000000) {
+    return (value / 1000000000).toFixed(2) + 'B';
+  } else if (value >= 1000000) {
+    return (value / 1000000).toFixed(2) + 'M';
+  } else if (value >= 1000) {
+    return (value / 1000).toFixed(2) + 'k';
+  } else {
+    return value;
+  }
 };
 
-const LivePriceDisplay = React.memo(({ price }) => (
+const formatValue = (value, isSmallScreen) => {
+  if (value === undefined || value === null) return 'N/A';
+  const numValue = Number(value);
+  return isSmallScreen ? kMB(numValue) : numValue.toLocaleString();
+};
+
+const LivePriceDisplay = React.memo(({ price, isSmallScreen }) => (
   <div className='flex gap-2 items-center'>
     <div className='px-1 py-0.5 border-[2px] border-gray-400 rounded-md text-xs flex gap-1 items-center font-semibold'>Live <span className='text-[8px]'>🟢</span></div>
-    <p className='font-semibold md:text-lg'>{formatPrice(price)}</p>
+    <p className='font-semibold md:text-lg'>${(price.toLocaleString())}</p>
   </div>
 ));
+
 LivePriceDisplay.displayName = 'LivePriceDisplay';
+
 const CoinPage = () => {
   const { id } = useParams();
   const dispatch = useDispatch();
@@ -32,6 +48,7 @@ const CoinPage = () => {
   const dm = useSelector((state) => state.theme.isDarkMode);
   const coinData = useSelector((state) => state.coins.coinDetails[id]);
   const historicalData = useSelector((state) => state.historicalData.data.find((data) => data.name === id));
+  const isSmallScreen = useIsSmallScreen();
 
   const livePriceRef = useRef(null);
 
@@ -74,13 +91,12 @@ const CoinPage = () => {
             market_cap_rank: action.payload.market_cap_rank,
             genesis_date: action.payload.genesis_date,
           };
-          console.log(action.payload)
           dispatch(addToRecentlyViewed(coinForRecentlyViewed));
 
           const initialPrice = action.payload.market_data.current_price.usd;
           setLivePrice(initialPrice);
           livePriceRef.current = initialPrice;
-          
+
           LivePriceService.startUpdates(id, initialPrice);
           unsubscribe = PubSub.subscribe('priceUpdate', ({ coinId, price }) => {
             if (coinId === id) {
@@ -90,7 +106,7 @@ const CoinPage = () => {
           });
         }
       });
-      dispatch(fetchHistoricalData(id));
+      dispatch(fetchHistoricalData({ coins: [id], days: '30' }));
     }
 
     return () => {
@@ -98,9 +114,14 @@ const CoinPage = () => {
       if (id) LivePriceService.stopUpdates(id);
     };
   }, [dispatch, id]);
-  // useEffect(()=>{
-    // console.log(livePrice)
-  // },[livePrice])
+
+  const formatPercentage = (changeObj) => {
+    if (changeObj && typeof changeObj.usd === 'number') {
+      return `${changeObj.usd.toFixed(2)}%`;
+    }
+    return 'N/A';
+  };
+
   const formattedHistoricalData = useMemo(() => 
     historicalData?.prices.map(([timestamp, price]) => ({
       date: new Date(timestamp),
@@ -112,45 +133,40 @@ const CoinPage = () => {
   return (
     <div className="flex flex-col gap-5 mx-auto border-gray-400">
       <div className={`p-2 md:p-3 border-2 theme-transition justify-between ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
-        <div className='flex justify-between items-center mb-2'>
+        <div className='flex-col gap-3 md:flex-row flex justify-between items-center py-3'>
           <div
             draggable={coinData ? true : false}
             onDragStart={handleDragStart}
             className='flex gap-2 items-center'>
-            {coinData?.image?.thumb && <Image className='h-10 w-10 rounded-full border-[1px] border-gray-500 object-cover' height={1000} width={1000} src={coinData?.image?.thumb} alt={coinData?.name} />}
+            {coinData?.image?.thumb && <Image className='h-8 w-8 md:h-10 md:w-10 rounded-full border-[1px] border-gray-500 object-cover' height={1000} width={1000} src={coinData?.image?.thumb} alt={coinData?.name} />}
             <h1 className="text-lg md:text-xl text-center md:text-left font-semibold uppercase">{id}</h1>
+            <span className='relative -left-1 bottom-2 text-xs'>{coinData?.symbol}</span>
           </div>
           {displayedPrice !== undefined && (
-        <LivePriceDisplay price={displayedPrice} />
-      )}
+            <LivePriceDisplay price={displayedPrice} isSmallScreen={isSmallScreen} />
+          )}
         </div>
-        {historicalData ? <CoinPriceChart isDarkMode={isDarkMode} coinId={id} historicalData={formattedHistoricalData} /> : <div>Loading Chart...</div>}
+        {coinData&&<div className='flex flex-col gap-2'>
+          <div className='flex justify-between text-xs border-t-[1px] border-gray-600 pt-3'>
+            <p className='py-1'><strong>Market Cap:</strong> ${formatValue(coinData.market_data.market_cap.usd, isSmallScreen)}</p>
+            <p className='py-1 flex items-center gap-2'><strong>Today</strong><span className={`flex items-center pr-2 font-semibold rounded-lg theme-transition ${isDarkMode?"bg-gray-800":"bg-gray-200"} ${coinData.market_data.price_change_percentage_24h>=0 ? 'text-green-500' : 'text-red-500'}`}>{coinData.market_data.price_change_percentage_24h>=0?<ArrowDropUp/>:<ArrowDropDown/>}{(coinData.market_data.price_change_percentage_24h).toFixed(2)}%</span> </p>
+          </div>
+          <div className='flex justify-between text-xs border-b-[1px] border-gray-600 pb-3'>
+            <p className='py-1'><strong>Max Supply:</strong> ${formatValue(coinData.market_data.max_supply, isSmallScreen)}</p>
+            <p className='py-1'><strong>Total Volume:</strong> ${formatValue(coinData.market_data.total_volume.usd, isSmallScreen)}</p>
+          </div>
+        </div>}
+        {historicalData ? <CoinPriceChart isDarkMode={isDarkMode} coinId={id} historicalData={formattedHistoricalData} /> : <div>Loading...</div>}
       </div>
       <div className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
         <h2 className="text-lg md:text-xl mb-4 text-center md:text-left font-semibold">Price Change Percentages</h2>
         {coinData ? <CoinBarChart isDarkMode={isDarkMode} coinData={coinData} /> : <div>Loading...</div>}
       </div>
       {coinData && (
-        <>
-          <div className='flex md:flex-row flex-col gap-5 justify-between'>
-            <div className={`w-full md:w-[48%] p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg text-xs md:text-sm`}>
-              <h2 className="text-lg md:text-xl font-semibold mb-4">Fundamentals</h2>
-              <p className='py-1'><strong>Market Cap:</strong> {formatPrice(coinData.market_data.market_cap.usd)}</p>
-              <p className='py-1'><strong>Total Supply:</strong> {formatPrice(coinData.market_data.total_supply)}</p>
-              <p className='py-1'><strong>Max Supply:</strong> {formatPrice(coinData.market_data.max_supply)}</p>
-            </div>
-            <div className={`w-full md:w-[48%] p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg text-xs md:text-sm`}>
-              <h2 className="text-lg md:text-xl font-semibold mb-4">Coin Information</h2>
-              <p className='py-1'><strong>Symbol:</strong> {coinData.symbol}</p>
-              <p className='py-1'><strong>Current Price:</strong> {formatPrice(displayedPrice)}</p>
-              <p className='py-1'><strong>Total Volume:</strong> {formatPrice(coinData.market_data.total_volume.usd)}</p>
-            </div>
-          </div>
-          <div className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg md:mb-5`}>
-            <h2 className="text-lg md:text-xl md:text-left text-center font-semibold mb-4">About {coinData.name}</h2>
-            <p className='text-xs md:text-sm md:text-left text-center' dangerouslySetInnerHTML={{ __html: coinData.description.en }} />
-          </div>
-        </>
+        <div onDragStart={handleDragStart} className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg md:mb-5`}>
+          <h2 className="text-lg md:text-xl md:text-left text-center font-semibold mb-4">About {coinData.name}</h2>
+          <p className='text-xs md:text-sm md:text-left text-center' dangerouslySetInnerHTML={{ __html: coinData.description.en }} />
+        </div>
       )}
     </div>
   );

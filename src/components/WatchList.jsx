@@ -3,25 +3,28 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Link from 'next/link';
-import { addToWatchlist, setWatchlist } from '@/redux/slices/watchListSlice';
-import { addToRecentlyViewed } from '@/redux/slices/coinsSlice';
+import { addToWatchlist, setWatchlist, removeFromWatchlist } from '@/redux/slices/watchListSlice';
 import { setTheme } from '@/redux/slices/themeSlice';
+import { Close as CloseIcon, Delete } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
 
 const WatchList = () => {
   const dispatch = useDispatch();
-  const [isDarkMode,setIsDarkMode]=useState(true);
-    const dm = useSelector((state) => state.theme.isDarkMode);
-    useEffect(() => {
-      if (typeof window !== 'undefined') {
-        const savedTheme = localStorage.getItem('isDarkMode');
-        setIsDarkMode(savedTheme !== null ? JSON.parse(savedTheme) : true)
-        if (savedTheme !== null) {
-          dispatch(setTheme(JSON.parse(savedTheme)));
-        }
-      }
-    }, [dispatch,dm]);
+  const [isDarkMode, setIsDarkMode] = useState(true);
+  const dm = useSelector((state) => state.theme.isDarkMode);
   const watchlist = useSelector((state) => state.watchlist) || [];
   const [showAll, setShowAll] = useState(false);
+  const router=useRouter();
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const savedTheme = localStorage.getItem('isDarkMode');
+      setIsDarkMode(savedTheme !== null ? JSON.parse(savedTheme) : true)
+      if (savedTheme !== null) {
+        dispatch(setTheme(JSON.parse(savedTheme)));
+      }
+    }
+  }, [dispatch, dm]);
 
   useEffect(() => {
     const storedWatchlist = JSON.parse(localStorage.getItem('watchlist') || '[]');
@@ -35,16 +38,25 @@ const WatchList = () => {
   const handleDrop = (e) => {
     e.preventDefault();
     const coinData = JSON.parse(e.dataTransfer.getData('text/plain'));
+    
+    dispatch(addToWatchlist(coinData));
+    
+    // Update the local storage
+    const updatedWatchlist = watchlist.map(coin => 
+      coin.id === coinData.id ? { ...coin, ...coinData } : coin
+    );
+    
     if (!watchlist.some(coin => coin.id === coinData.id)) {
-      dispatch(addToWatchlist(coinData));
-      // dispatch(addToRecentlyViewed(coinData));
-      const newWatchlist = [...watchlist, coinData];
-      localStorage.setItem('watchlist', JSON.stringify(newWatchlist));
-      
-      // const recentlyViewed = JSON.parse(localStorage.getItem('recentlyViewed') || '[]');
-      // const updatedRecentlyViewed = [coinData, ...recentlyViewed.filter(coin => coin.id !== coinData.id)].slice(0, 10);
-      // localStorage.setItem('recentlyViewed', JSON.stringify(updatedRecentlyViewed));
+      updatedWatchlist.push(coinData);
     }
+    
+    localStorage.setItem('watchlist', JSON.stringify(updatedWatchlist));
+  };
+  const handleRemoveCoin = (coinId, e) => {
+    e.stopPropagation();
+    dispatch(removeFromWatchlist(coinId));
+    const newWatchlist = watchlist.filter(coin => coin.id !== coinId);
+    localStorage.setItem('watchlist', JSON.stringify(newWatchlist));
   };
 
   if (watchlist.length === 0) {
@@ -69,7 +81,9 @@ const WatchList = () => {
     return '$' + value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
-
+  const handleClick = (id) => {
+    router.push("/coin/" + id);
+  };
   const displayedCoins = showAll ? watchlist : watchlist.slice(0, 5);
 
   return (
@@ -91,23 +105,31 @@ const WatchList = () => {
           </thead>
           <tbody className="text-gray-500 font-light">
             {displayedCoins.map((coin) => (
-              <tr key={coin?.id} className={`theme-transition ${isDarkMode ? "hover:bg-gray-900" : "hover:bg-gray-200"} cursor-pointer`}>
+              <tr key={coin?.id} onClick={()=>{handleClick(coin.id)}} className={`theme-transition cursor-pointer ${isDarkMode ? "hover:bg-gray-900" : "hover:bg-gray-200"}`}>
                 <td className="py-2 px-3 text-left whitespace-nowrap">
-                  <Link href={`/coin/${coin?.id}`} className="flex items-center group">
+                  <div className="flex items-center group">
                     <img className="w-6 h-6 rounded-full mr-2" src={coin?.large||coin.image} alt={coin?.name} />
                     <span className="font-medium text-blue-400 group-hover:text-blue-300">
                       {coin.symbol.toUpperCase()}
                     </span>
-                  </Link>
+                  </div>
                 </td>
                 <td className="py-2 px-3 text-right">
-                  {coin.current_price?formatPrice(coin.current_price):"$"+parseFloat(coin?.data?.price).toFixed(8)}
+                  {coin.current_price?formatPrice(coin.current_price):"$"+parseFloat(coin?.data?.price).toFixed(2)}
                 </td>
-                <td className={`py-2 px-3 text-right ${(coin?.data?Number(coin?.data?.price_change_percentage_24h.usd):Number(coin?.price_change_percentage_24h.usd))>=0 ? 'text-green-500' : 'text-red-500'}`}>
+                <td className={`py-2 px-3 text-right ${(coin?.data?(coin?.data?.price_change_percentage_24h.usd):(coin?.price_change_percentage_24h))>=0 ? 'text-green-500' : 'text-red-500'}`}>
                   {coin.data?formatPercentage(coin?.data.price_change_percentage_24h.usd):formatPercentage(coin.price_change_percentage_24h)}
                 </td>
                 <td className="py-2 px-3 text-right">
                   {coin?.data?coin?.data.market_cap:formatPrice(coin?.market_cap)}
+                </td>
+                <td className="py-2text-right">
+                <button
+                      onClick={(e) => handleRemoveCoin(coin.id, e)}
+                      className={`flex items-center justify-center font-semibold rounded-full theme-transition ${isDarkMode ? 'text-gray-700 hover:text-gray-600' : 'text-gray-500 hover:text-gray-600'}`}
+                    >
+                      <Delete />
+                    </button>
                 </td>
               </tr>
             ))}
@@ -117,7 +139,7 @@ const WatchList = () => {
       {watchlist.length > 5 && (
         <div
             onClick={() => setShowAll(!showAll)}
-            className={`w-full text-center mt-2 font-bold py-1.5 px-2 rounded text-xs cursor-pointer ${isDarkMode?"text-white bg-gray-900":"text-black bg-gray-200"}`}
+            className={`w-full text-center mt-2 font-bold py-1.5 px-2 rounded text-xs cursor-pointer theme-transition ${isDarkMode?"text-white bg-gray-900":"text-black bg-gray-200"}`}
           >
             {showAll ? 'Show Less' : 'View More'}
         </div>
