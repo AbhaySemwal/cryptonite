@@ -92,7 +92,7 @@ const CoinPriceChart = ({ isDarkMode, coinId, historicalData }) => {
                     } else if (value >= 1000) {
                       return (value / 1000).toFixed(1) + 'k';
                     } else {
-                      return value.toFixed(0);
+                      return value.toFixed(3);
                     }
                   },
                   color: isDarkMode ? 'rgba(255, 255, 255, 0.8)' : 'rgba(0, 0, 0, 0.8)'
