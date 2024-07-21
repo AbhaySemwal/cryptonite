@@ -34,7 +34,7 @@ const HomeContent = () => {
 
     return (
         <div className='w-full flex flex-col gap-5 md:pb-5'>
-            <div className={`theme-transition flex items-center border-[2px] rounded-lg ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} p-3`}>
+            <div className={`theme-transition flex items-center border-[2px] rounded-lg ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} p-2 md:p-3`}>
                 <LineChart/>
             </div>
             <TrendingMarket/>

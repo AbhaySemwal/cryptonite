@@ -46,7 +46,7 @@ const ExplorePage = () => {
   }
 
   return (
-    <div className={`p-3 text-xs border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600":"bg-gray-100 border-gray-400"}`}>
+    <div className={`p-2 md:p-3 text-xs border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600":"bg-gray-100 border-gray-400"}`}>
       <h1 className="text-xl font-bold md:text-left text-center mb-4">Explore</h1>
       <div className="overflow-x-auto">
         <table className="w-full">

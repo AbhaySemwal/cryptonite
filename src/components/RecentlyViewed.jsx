@@ -73,7 +73,7 @@ const RecentlyViewed = () => {
   };
 
   return (
-    <div className={`theme-transition p-3 text-xs border-[2px] rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"}`}>
+    <div className={`theme-transition p-2 md:p-3 text-xs border-[2px] rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"}`}>
       <h2 className="md:text-xl text-lg font-bold mb-4 text-center md:text-left">Recently Viewed</h2>
       <div className="overflow-x-auto">
         <table className="w-full">

@@ -17,7 +17,7 @@ const PublicCompaniesHoldings = ({ companies }) => {
     }
   }, [dispatch,dm]);
   return (
-    <div className={`theme-transition p-3 border-[2px] rounded-lg ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"}`}>
+    <div className={`theme-transition p-2 md:p-3 border-[2px] rounded-lg ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"}`}>
       <h2 className="text-lg md:text-xl font-bold mb-4 text-center md:text-left">Public Companies Holdings</h2>
       <table className="w-full text-xs">
         <thead>

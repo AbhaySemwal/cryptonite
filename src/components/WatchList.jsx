@@ -89,7 +89,7 @@ const WatchList = () => {
   console.log(displayedCoins)
   return (
     <div 
-      className={`theme-transition p-3 text-xs border-[2px] mb-5 rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"}`}
+      className={`theme-transition p-2 md:p-3 text-xs border-[2px] mb-5 rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"}`}
       onDragOver={handleDragOver}
       onDrop={handleDrop}
     >

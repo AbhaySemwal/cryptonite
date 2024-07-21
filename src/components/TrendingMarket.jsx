@@ -49,7 +49,7 @@ const TrendingMarket = () => {
   const displayedCoins = showAll ? trendingCoins : trendingCoins.slice(0, 5);
 
   return (
-    <div className={`theme-transition p-3 text-xs ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"} border-[2px] rounded-lg `}>
+    <div className={`theme-transition p-2 md:p-3 text-xs ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"} border-[2px] rounded-lg `}>
       <h1 className="text-lg md:text-xl font-bold mb-4 text-center md:text-left">Trending</h1>
       <div className="overflow-x-auto">
         <table className="w-full">

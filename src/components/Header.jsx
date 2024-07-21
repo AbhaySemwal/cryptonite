@@ -84,7 +84,7 @@ const Header = () => {
   };
 
   return (
-    <nav className={`theme-transition p-3 py-2 md:py-3 md:px-5 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-900'}`}>
+    <nav className={`theme-transition px-3 py-2 md:py-3 md:px-5 ${isDarkMode ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-900'}`}>
       <div className="flex items-center justify-between">
         <Link href="/"><Image className='h-8 w-8 md:h-10 md:w-10' height={1000} width={1000} src={"/crypt.png"} alt="Logo" /></Link>
         
