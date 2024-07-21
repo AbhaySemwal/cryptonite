@@ -49,7 +49,8 @@ const CoinPage = () => {
   const coinData = useSelector((state) => state.coins.coinDetails[id]);
   const historicalData = useSelector((state) => state.historicalData.data.find((data) => data.name === id));
   const isSmallScreen = useIsSmallScreen();
-
+  const [showFullDescription, setShowFullDescription] = useState(false);
+  
   const livePriceRef = useRef(null);
 
   const handleDragStart = useCallback((e) => {
@@ -115,18 +116,16 @@ const CoinPage = () => {
     };
   }, [dispatch, id]);
 
-  const formatPercentage = (changeObj) => {
-    if (changeObj && typeof changeObj.usd === 'number') {
-      return `${changeObj.usd.toFixed(2)}%`;
-    }
-    return 'N/A';
-  };
-
   const formattedHistoricalData = useMemo(() => 
     historicalData?.prices.map(([timestamp, price]) => ({
       date: new Date(timestamp),
       price: price
     })), [historicalData]);
+
+    const truncateText = (text, maxLength) => {
+      if (text.length <= maxLength) return text;
+      return text.substr(0, maxLength) + '...';
+    };
 
   const displayedPrice = livePrice || (coinData && coinData.market_data.current_price.usd);
 
@@ -163,11 +162,21 @@ const CoinPage = () => {
         {coinData ? <CoinBarChart isDarkMode={isDarkMode} coinData={coinData} /> : <div className="py-2 text-center">Loading...</div>}
       </div>
       {coinData?.description?.en && (
-        <div className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
-          <h2 draggable onDragStart={handleDragStart} className="text-lg md:text-xl md:text-left text-center font-semibold mb-4">About {coinData.name}</h2>
-          <p className='text-xs md:text-sm md:text-left text-center' dangerouslySetInnerHTML={{ __html: coinData.description.en }} />
+      <div className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
+        <h2 draggable onDragStart={handleDragStart} className="text-lg md:text-xl md:text-left text-center font-semibold mb-4">About {coinData.name}</h2>
+        <div className='text-xs md:text-sm md:text-left text-center'>
+          <p dangerouslySetInnerHTML={{ __html: showFullDescription ? coinData.description.en : truncateText(coinData.description.en, 300) }} />
+          {coinData.description.en.length > 300 && (
+            <button 
+              onClick={() => setShowFullDescription(!showFullDescription)}
+              className="mt-1 text-gray-500 hover:text-gray-600 transition-colors duration-200"
+            >
+              {showFullDescription ? 'Read Less' : 'Read More'}
+            </button>
+          )}
         </div>
-      )}
+      </div>
+    )}
     </div>
   );
 };
