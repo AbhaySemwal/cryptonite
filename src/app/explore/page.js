@@ -3,9 +3,10 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Link from 'next/link';
 import { fetchCoins } from '@/redux/slices/coinsSlice';
-import { ArrowLeft, ArrowRight } from '@mui/icons-material';
+import { ArrowLeft, ArrowRight, Replay } from '@mui/icons-material';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
+import { CircularProgress } from '@mui/material';
 
 const ExplorePage = () => {
   const dispatch = useDispatch();
@@ -22,8 +23,13 @@ const ExplorePage = () => {
     e.dataTransfer.setData('text/plain', JSON.stringify(coin));
   };
   
-  if (status === 'loading') return <div className={`py-2 text-center w-full border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600":"bg-gray-100 border-gray-400"}`}>Loading...</div>;
-  if (status === 'failed') return <div className={`py-2 text-center w-full border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600":"bg-gray-100 border-gray-400"}`}>Error: {error}</div>;
+  if (status === 'loading') {
+    return <div className={`text-center text-sm font-semibold w-full border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} p-2`}><p className='mb-2'>LOADING EXPLORE SECTION...</p><CircularProgress/></div>;
+  }
+
+  if (status === 'failed') {
+    return <div className={`text-center text-sm font-semibold w-full border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} p-2`}><p className='mb-2'>Error loading section, Please try again</p><div className='cursor-pointer' onClick={()=>{window.location.reload()}}><Replay/></div></div>;
+  }
 
   const formatPercentage = (value) => {
     if (value === undefined || value === null) return 'N/A';

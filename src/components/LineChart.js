@@ -1,9 +1,12 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Chart, LineController, LineElement, PointElement, LinearScale, TimeScale, Title, Tooltip, Legend, CategoryScale } from 'chart.js';
 import 'chartjs-adapter-date-fns';
+import { CircularProgress } from '@mui/material';
+import { Replay } from '@mui/icons-material';
+import { useRouter } from 'next/navigation';
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, TimeScale, Title, Tooltip, Legend, CategoryScale);
 
@@ -13,6 +16,7 @@ const LineChart = () => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const [timeRange, setTimeRange] = useState('30d');
+  const router=useRouter()
 
   const filterDataByTimeRange = (data, range) => {
     const now = new Date();
@@ -150,11 +154,11 @@ const LineChart = () => {
   };
 
   if (status === 'loading') {
-    return <div className='text-center w-full'>Loading chart...</div>;
+    return <div className='text-center text-sm font-semibold w-full'><p className='mb-2'>LOADING CHART...</p><CircularProgress/></div>;
   }
 
   if (status === 'failed') {
-    return <div className='text-center w-full'>Error loading chart: {error}</div>;
+    return <div className='text-center text-sm font-semibold w-full'><p className='mb-2'>Error loading chart, Please try again</p><div className='cursor-pointer' onClick={()=>{window.location.reload()}}><Replay/></div></div>;
   }
 
   return (

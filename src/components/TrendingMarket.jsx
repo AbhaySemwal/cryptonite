@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchTrendingCoins } from '../redux/slices/coinsSlice';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
+import { CircularProgress } from '@mui/material';
+import { Replay } from '@mui/icons-material';
 
 const TrendingMarket = () => {
   const dispatch = useDispatch();
@@ -23,15 +25,11 @@ const TrendingMarket = () => {
   }, [trendingStatus, dispatch]);
 
   if (trendingStatus === 'loading') {
-    return <div className={`py-2 w-full text-center theme-transition ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"} border-[2px] rounded-lg `}>
-      Loading trending coins...
-    </div>;
+    return <div className={`text-center text-sm font-semibold w-full border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} p-2`}><p className='mb-2'>LOADING TRENDING COINS...</p><CircularProgress/></div>;
   }
 
   if (trendingStatus === 'failed') {
-    return <div className={`py-2 w-full text-center theme-transition ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"} border-[2px] rounded-lg `}>
-      Error: {trendingError}
-    </div>;
+    return <div className={`text-center text-sm font-semibold w-full border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600 text-white":"bg-gray-100 border-gray-400 text-black"} p-2`}><p className='mb-2'>Error loading trending coins, Please try again</p><div className='cursor-pointer' onClick={()=>{window.location.reload()}}><Replay/></div></div>;
   }
   
   const formatPrice = (value) => {

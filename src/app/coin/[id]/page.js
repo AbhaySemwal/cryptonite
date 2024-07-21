@@ -12,6 +12,7 @@ import LivePriceService from '@/services/LivePriceService';
 import PubSub from '@/services/PubSub';
 import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
 import useIsSmallScreen from '@/hooks/useIsSmallScreen';
+import { CircularProgress } from '@mui/material';
 
 const kMB = (value) => {
   if (value >= 1000000000) {
@@ -155,11 +156,11 @@ const CoinPage = () => {
             <p className='py-1'><strong>Total Volume:</strong> ${formatValue(coinData.market_data.total_volume.usd, isSmallScreen)}</p>
           </div>
         </div>}
-        {historicalData ? <CoinPriceChart isDarkMode={isDarkMode} coinId={id} historicalData={formattedHistoricalData} /> : <div className='py-2 text-center'>Loading...</div>}
+        {historicalData ? <CoinPriceChart isDarkMode={isDarkMode} coinId={id} historicalData={formattedHistoricalData} /> : <div className={`p-2 text-center text-sm font-semibold w-full`}><p className='mb-2'>LOADING CHART...</p><CircularProgress/></div>}
       </div>
       <div className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
         <h2 draggable onDragStart={handleDragStart} className="text-lg md:text-xl mb-4 text-center md:text-left font-semibold">Price Change Percentages</h2>
-        {coinData ? <CoinBarChart isDarkMode={isDarkMode} coinData={coinData} /> : <div className="py-2 text-center">Loading...</div>}
+        {coinData ? <CoinBarChart isDarkMode={isDarkMode} coinData={coinData} /> : <div className={`p-2 text-center text-sm font-semibold w-full`}><p className='mb-2'>LOADING CHART...</p><CircularProgress/></div>}
       </div>
       {coinData?.description?.en && (
       <div className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
