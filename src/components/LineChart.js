@@ -158,8 +158,8 @@ const LineChart = () => {
   }
 
   return (
-    <div className='w-full'>
-      <div className="relative w-full min-h-[400px]">
+    <div className='w-full overflow-x-auto'>
+      <div className="relative w-full min-w-[400px] min-h-[400px]">
         <canvas ref={chartRef} />
       </div>
       <div className={`theme-transition ${isDarkMode ? "text-white" : "text-black"} flex flex-col md:flex-row justify-center gap-2 text-xs py-2`}>
