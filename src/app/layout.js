@@ -2,7 +2,6 @@ import { Inter, Montserrat } from 'next/font/google';
 import "./globals.css";
 import { Providers } from "@/redux/providers";
 import ThemeAwareLayout from '@/components/ThemeAwareLayout';
-import Head from 'next/head';
 
 const inter = Inter({ subsets: ["latin"] });
 const montserrat = Montserrat({

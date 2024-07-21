@@ -42,7 +42,7 @@ Create a `.env.local` file in the root directory and add your API key: COINGECKO
 
 ### Core Functionality
 - **Watchlist Management**: 
-- Add: Drag and drop tokens to the watchlist
+- Add: Drag from trending section, explore page, recently viewed section and title of Product page and drop tokens to the watchlist
 - Remove: Click the delete icon next to a token
 - View Details: Click on a token for in-depth information
 - **Theme Toggle**: Switch between light and dark modes for optimal viewing
