@@ -33,13 +33,7 @@ const TrendingMarket = () => {
       Error: {trendingError}
     </div>;
   }
-
-  const format = (price) => {
-    if (typeof price === 'number') {
-      return `$${price.toFixed(8)}`;
-    }
-    return price || 'N/A';
-  };
+  
   const formatPrice = (value) => {
     if (value === undefined || value === null) return 'N/A';
     return '$' + value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 4 });
