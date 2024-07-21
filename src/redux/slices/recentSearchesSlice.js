@@ -1,4 +1,3 @@
-// redux/slices/recentSearchesSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 const getInitialState = () => {

@@ -31,7 +31,7 @@ const formatValue = (value, isSmallScreen) => {
   return isSmallScreen ? kMB(numValue) : numValue.toLocaleString();
 };
 
-const LivePriceDisplay = React.memo(({ price, isSmallScreen }) => (
+const LivePriceDisplay = React.memo(({ price }) => (
   <div className='flex gap-2 items-center'>
     <div className='px-1 py-0.5 border-[2px] border-gray-400 rounded-md text-xs flex gap-1 items-center font-semibold'>Live <span className='text-[8px]'>🟢</span></div>
     <p className='font-semibold md:text-lg'>${(price.toLocaleString())}</p>
@@ -143,7 +143,7 @@ const CoinPage = () => {
             <span className='relative -left-1 bottom-2 text-xs'>{coinData?.symbol}</span>
           </div>
           {displayedPrice !== undefined && (
-            <LivePriceDisplay price={displayedPrice} isSmallScreen={isSmallScreen} />
+            <LivePriceDisplay price={displayedPrice}/>
           )}
         </div>
         {coinData&&<div className='flex flex-col gap-2'>
@@ -156,15 +156,15 @@ const CoinPage = () => {
             <p className='py-1'><strong>Total Volume:</strong> ${formatValue(coinData.market_data.total_volume.usd, isSmallScreen)}</p>
           </div>
         </div>}
-        {historicalData ? <CoinPriceChart isDarkMode={isDarkMode} coinId={id} historicalData={formattedHistoricalData} /> : <div>Loading...</div>}
+        {historicalData ? <CoinPriceChart isDarkMode={isDarkMode} coinId={id} historicalData={formattedHistoricalData} /> : <div className='py-2 text-center'>Loading...</div>}
       </div>
-      <div draggable onDragStart={handleDragStart} className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
-        <h2 className="text-lg md:text-xl mb-4 text-center md:text-left font-semibold">Price Change Percentages</h2>
-        {coinData ? <CoinBarChart isDarkMode={isDarkMode} coinData={coinData} /> : <div>Loading...</div>}
+      <div className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
+        <h2 draggable onDragStart={handleDragStart} className="text-lg md:text-xl mb-4 text-center md:text-left font-semibold">Price Change Percentages</h2>
+        {coinData ? <CoinBarChart isDarkMode={isDarkMode} coinData={coinData} /> : <div className="py-2 text-center">Loading...</div>}
       </div>
       {coinData?.description?.en && (
-        <div draggable onDragStart={handleDragStart} className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
-          <h2 className="text-lg md:text-xl md:text-left text-center font-semibold mb-4">About {coinData.name}</h2>
+        <div className={`p-2 md:p-3 border-2 theme-transition ${isDarkMode ? "bg-gray-950 border-gray-600 text-white" : "bg-gray-100 border-gray-400 text-black"} rounded-lg`}>
+          <h2 draggable onDragStart={handleDragStart} className="text-lg md:text-xl md:text-left text-center font-semibold mb-4">About {coinData.name}</h2>
           <p className='text-xs md:text-sm md:text-left text-center' dangerouslySetInnerHTML={{ __html: coinData.description.en }} />
         </div>
       )}

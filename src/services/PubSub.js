@@ -1,4 +1,3 @@
-// services/PubSub.js
 class PubSub {
     constructor() {
       this.subscribers = {};

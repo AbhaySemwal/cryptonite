@@ -5,7 +5,7 @@ const getInitialTheme = () => {
     const savedTheme = localStorage.getItem('isDarkMode');
     return savedTheme !== null ? JSON.parse(savedTheme) : true;
   }
-  return true; // Default to dark mode for server-side rendering
+  return true;
 };
 
 const themeSlice = createSlice({

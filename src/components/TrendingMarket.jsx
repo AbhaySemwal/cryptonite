@@ -1,11 +1,9 @@
 'use client';
-
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTrendingCoins } from '../redux/slices/coinsSlice';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-// import { formatPrice } from './FormatPrice';
+import Image from 'next/image';
 
 const TrendingMarket = () => {
   const dispatch = useDispatch();
@@ -25,13 +23,13 @@ const TrendingMarket = () => {
   }, [trendingStatus, dispatch]);
 
   if (trendingStatus === 'loading') {
-    return <div className={`p-3 theme-transition ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"} border-[2px] rounded-lg `}>
+    return <div className={`py-2 w-full text-center theme-transition ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"} border-[2px] rounded-lg `}>
       Loading trending coins...
     </div>;
   }
 
   if (trendingStatus === 'failed') {
-    return <div className={`p-3 theme-transition ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"} border-[2px] rounded-lg `}>
+    return <div className={`py-2 w-full text-center theme-transition ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"} border-[2px] rounded-lg `}>
       Error: {trendingError}
     </div>;
   }
@@ -57,7 +55,7 @@ const TrendingMarket = () => {
   }
 
   const displayedCoins = showAll ? trendingCoins : trendingCoins.slice(0, 5);
-  
+
   return (
     <div className={`theme-transition p-3 text-xs ${isDarkMode?"text-white border-gray-600 bg-gray-950":"text-black bg-gray-100 border-gray-400"} border-[2px] rounded-lg `}>
       <h1 className="text-lg md:text-xl font-bold mb-4 text-center md:text-left">Trending</h1>
@@ -77,8 +75,8 @@ const TrendingMarket = () => {
               <tr key={coin.id} onClick={()=>handleClick(coin.id)}  draggable onDragStart={(e) => handleDragStart(e, coin)} className={`${isDarkMode?"hover:bg-gray-900":"hover:bg-gray-200"} cursor-pointer`}>
                 <td className="py-2 px-3 text-left whitespace-nowrap">
                   <div className="flex items-center group">
-                    <img className="w-6 h-6 rounded-full mr-2" src={coin.large} alt={coin.name} />
-                    <span className="font-medium text-blue-400 group-hover:text-blue-300">
+                    <Image height={1000} width={1000} className="w-6 h-6 rounded-full mr-2" src={coin.large} alt={coin.name} />
+                    <span className="font-medium text-blue-500 group-hover:text-blue-400">
                       {coin.symbol.toUpperCase()}
                     </span>
                   </div>

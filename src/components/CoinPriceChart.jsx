@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useEffect, useRef, useState } from 'react';
 import { Chart, LineController, LineElement, PointElement, LinearScale, TimeScale, Title, Tooltip, Legend, CategoryScale } from 'chart.js';
 import 'chartjs-adapter-date-fns';
@@ -147,8 +146,8 @@ const CoinPriceChart = ({ isDarkMode, coinId, historicalData }) => {
   };
 
   return (
-    <div className='w-full'>
-      <div className="relative w-full min-h-[400px]"> {/* Ensure container height for responsiveness */}
+    <div className='w-full py-2'>
+      <div className="relative w-full min-h-[400px]">
         <canvas ref={chartRef} />
       </div>
       <div className={`${isDarkMode ? "text-white" : "text-black"} flex flex-col md:flex-row justify-center gap-2 text-xs py-2`}>

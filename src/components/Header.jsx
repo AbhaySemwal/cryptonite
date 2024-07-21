@@ -1,9 +1,7 @@
-// components/Header.js
 'use client';
-
 import Image from 'next/image';
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, WbSunny, Brightness2, History, ExploreOutlined, Menu } from '@mui/icons-material';
+import { Search, History, ExploreOutlined, Menu } from '@mui/icons-material';
 import Link from 'next/link';
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
@@ -100,7 +98,8 @@ const Header = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
               onFocus={handleSearchFocus}
             />
-            {showDropdown && (
+            {showDropdown &&(recentSearches[0]||searchResults[0])&&
+            (
               <div className={`theme-transition absolute text-xs top-full left-0 w-full mt-1 ${isDarkMode ? 'bg-gray-900 border-gray-700' : 'bg-white border-gray-300'} border rounded-md shadow-lg z-10`}>
                 {searchTerm === '' ? (
                   <>
@@ -128,7 +127,7 @@ const Header = () => {
                       className={`theme-transition p-2 cursor-pointer font-semibold flex items-center ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
                       onClick={() => handleCoinSelect(coin)}
                     >
-                      <img src={coin.thumb} alt={coin.name} className="w-6 h-6 mr-2" />
+                      <Image height={1000} width={1000} src={coin.thumb} alt={coin.name} className="w-6 h-6 mr-2" />
                       <span>{coin.name} ({coin.symbol})</span>
                     </div>
                   ))
@@ -200,7 +199,7 @@ const Header = () => {
                       className={`theme-transition p-2 cursor-pointer font-semibold flex items-center ${isDarkMode ? 'hover:bg-gray-800' : 'hover:bg-gray-100'}`}
                       onClick={() => handleCoinSelect(coin)}
                     >
-                      <img src={coin.thumb} alt={coin.name} className="w-6 h-6 mr-2" />
+                      <Image height={1000} width={1000} src={coin.thumb} alt={coin.name} className="w-6 h-6 mr-2" />
                       <span>{coin.name} ({coin.symbol})</span>
                     </div>
                   ))

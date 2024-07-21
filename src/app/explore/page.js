@@ -1,10 +1,10 @@
 'use client';
-
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Link from 'next/link';
 import { fetchCoins } from '@/redux/slices/coinsSlice';
 import { ArrowLeft, ArrowRight } from '@mui/icons-material';
+import Image from 'next/image';
 
 const ExplorePage = () => {
   const dispatch = useDispatch();
@@ -20,8 +20,8 @@ const ExplorePage = () => {
     e.dataTransfer.setData('text/plain', JSON.stringify(coin));
   };
   
-  if (status === 'loading') return <div className={`p-3 border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600":"bg-gray-100 border-gray-400"}`}>Loading...</div>;
-  if (status === 'failed') return <div className={`p-3 border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600":"bg-gray-100 border-gray-400"}`}>Error: {error}</div>;
+  if (status === 'loading') return <div className={`py-2 text-center w-full border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600":"bg-gray-100 border-gray-400"}`}>Loading...</div>;
+  if (status === 'failed') return <div className={`py-2 text-center w-full border-[2px] rounded-lg theme-transition ${isDarkMode?"bg-gray-950 border-gray-600":"bg-gray-100 border-gray-400"}`}>Error: {error}</div>;
 
   const formatPercentage = (value) => {
     if (value === undefined || value === null) return 'N/A';
@@ -52,8 +52,8 @@ const ExplorePage = () => {
               <tr key={coin.id} draggable onDragStart={(e) => handleDragStart(e, coin)} className={`theme-transition ${isDarkMode?"hover:bg-gray-900":"hover:bg-gray-200"} cursor-pointer`}>
                 <td className="py-2 px-3 text-left whitespace-nowrap">
                   <Link href={`/coin/${coin.id}`} className="flex items-center group">
-                    <img className="w-6 h-6 rounded-full mr-2" src={coin.image} alt={coin.name} />
-                    <span className="font-medium text-blue-400 group-hover:text-blue-300">
+                    <Image height={1000} width={1000} className="w-6 h-6 rounded-full mr-2" src={coin.image} alt={coin.name} />
+                    <span className="font-medium text-blue-500 group-hover:text-blue-400">
                       {coin.symbol.toUpperCase()}
                     </span>
                   </Link>

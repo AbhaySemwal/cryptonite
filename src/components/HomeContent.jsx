@@ -7,6 +7,7 @@ import { fetchGlobalMarketCap, fetchPublicCompaniesHoldings } from '@/redux/slic
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { setTheme } from '@/redux/slices/themeSlice';
+import { fetchHistoricalData, resetHistoricalData } from '@/redux/slices/historicalDataSlice';
 
 const HomeContent = () => {
 
@@ -23,8 +24,10 @@ const HomeContent = () => {
       }
     }, [dispatch,dm]);
     const { publicCompaniesHoldings } = useSelector(state => state.home);
-  
+    
     useEffect(() => {
+      dispatch(resetHistoricalData());
+      dispatch(fetchHistoricalData({ coins: ['bitcoin', 'ethereum', 'binancecoin'], days: '30' }));
       dispatch(fetchGlobalMarketCap());
       dispatch(fetchPublicCompaniesHoldings());
     }, [dispatch]);

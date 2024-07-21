@@ -7,6 +7,7 @@ import { addToWatchlist, setWatchlist, removeFromWatchlist } from '@/redux/slice
 import { setTheme } from '@/redux/slices/themeSlice';
 import { Close as CloseIcon, Delete } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 const WatchList = () => {
   const dispatch = useDispatch();
@@ -78,14 +79,14 @@ const WatchList = () => {
 
   const formatPrice = (value) => {
     if (value === undefined || value === null) return 'N/A';
-    return '$' + value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return ((String(value)[0]!='$'?'$':'') + value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }));
   };
 
   const handleClick = (id) => {
     router.push("/coin/" + id);
   };
   const displayedCoins = showAll ? watchlist : watchlist.slice(0, 5);
-
+  console.log(displayedCoins)
   return (
     <div 
       className={`theme-transition p-3 text-xs border-[2px] mb-5 rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"}`}
@@ -105,33 +106,55 @@ const WatchList = () => {
           </thead>
           <tbody className="text-gray-500 font-light">
             {displayedCoins.map((coin) => (
-              <tr key={coin?.id} onClick={()=>{handleClick(coin.id)}} className={`theme-transition cursor-pointer ${isDarkMode ? "hover:bg-gray-900" : "hover:bg-gray-200"}`}>
+              <tr key={coin?.id} onClick={() => handleClick(coin.id)} className={`theme-transition cursor-pointer ${isDarkMode ? "hover:bg-gray-900" : "hover:bg-gray-200"}`}>
                 <td className="py-2 px-3 text-left whitespace-nowrap">
                   <div className="flex items-center group">
-                    <img className="w-6 h-6 rounded-full mr-2" src={coin?.large||coin.image} alt={coin?.name} />
-                    <span className="font-medium text-blue-400 group-hover:text-blue-300">
+                    <Image height={1000} width={1000} className="w-6 h-6 rounded-full mr-2" src={coin?.large || coin?.image?.large || coin?.image?.thumb || coin?.image} alt={coin?.name} />
+                    <span className="font-medium text-blue-500 group-hover:text-blue-400">
                       {coin.symbol.toUpperCase()}
                     </span>
                   </div>
                 </td>
                 <td className="py-2 px-3 text-right">
-                  {coin.current_price?formatPrice(coin.current_price):"$"+parseFloat(coin?.data?.price).toFixed(2)}
+                {coin?.data?.price
+                    ? formatPrice(coin?.data?.price)
+                    : coin?.current_price
+                      ? formatPrice(coin?.current_price)
+                      : coin.market_data?.current_price?.usd
+                        ? formatPrice(coin.market_data.current_price.usd)
+                        : 'N/A'}
                 </td>
-                <td className={`py-2 px-3 text-right ${(coin?.data?(coin?.data?.price_change_percentage_24h.usd):(coin?.price_change_percentage_24h))>=0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {coin.data?formatPercentage(coin?.data.price_change_percentage_24h.usd):formatPercentage(coin.price_change_percentage_24h)}
+                <td className={`py-2 px-3 text-right ${
+                  (coin?.data?.price_change_percentage_24h?.usd || coin?.price_change_percentage_24h || coin.market_data?.price_change_percentage_24h || 0) >= 0 
+                    ? 'text-green-500' 
+                    : 'text-red-500'
+                }`}>
+                  {coin.data
+                    ? formatPercentage(coin.data.price_change_percentage_24h.usd)
+                    : coin.price_change_percentage_24h
+                      ? formatPercentage(coin.price_change_percentage_24h)
+                      : coin.market_data?.price_change_percentage_24h
+                        ? formatPercentage(coin.market_data.price_change_percentage_24h)
+                        : 'N/A'}
                 </td>
                 <td className="py-2 px-3 text-right">
-                  {coin?.data?coin?.data.market_cap:formatPrice(coin?.market_cap)}
+                  {coin?.data?.market_cap
+                    ? formatPrice(coin.data.market_cap)
+                    : coin?.market_cap
+                      ? formatPrice(coin.market_cap)
+                      : coin.market_data?.market_cap?.usd
+                        ? formatPrice(coin.market_data.market_cap.usd)
+                        : 'N/A'}
                 </td>
-                <td className="py-2text-right">
-                <button
-                      onClick={(e) => handleRemoveCoin(coin.id, e)}
-                      className={`flex items-center justify-center font-semibold rounded-full theme-transition ${isDarkMode ? 'text-gray-700 hover:text-gray-600' : 'text-gray-500 hover:text-gray-600'}`}
-                    >
-                      <Delete />
-                    </button>
+                <td className="py-2 text-right">
+                  <button
+                    onClick={(e) => handleRemoveCoin(coin.id, e)}
+                    className={`flex items-center justify-center font-semibold rounded-full theme-transition ${isDarkMode ? 'text-gray-700 hover:text-gray-600' : 'text-gray-500 hover:text-gray-600'}`}
+                  >
+                    <Delete />
+                  </button>
                 </td>
-              </tr>
+            </tr>
             ))}
           </tbody>
         </table>

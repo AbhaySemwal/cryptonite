@@ -1,12 +1,11 @@
 'use client';
-
-import Link from 'next/link';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToRecentlyViewed, fetchCoinDetails, initializeRecentlyViewed, removeFromRecentlyViewed } from '@/redux/slices/coinsSlice';
-import { Close as CloseIcon, Delete } from '@mui/icons-material';
+import { initializeRecentlyViewed, removeFromRecentlyViewed, fetchCoinDetails } from '@/redux/slices/coinsSlice';
+import { Delete } from '@mui/icons-material';
 import { useRouter } from 'next/navigation';
 import { setTheme } from '@/redux/slices/themeSlice';
+import Image from 'next/image';
 
 const RecentlyViewed = () => {
   const dispatch = useDispatch();
@@ -26,13 +25,14 @@ const RecentlyViewed = () => {
       }
     }
   }, [dispatch, dm]);
+
   useEffect(() => {
     dispatch(initializeRecentlyViewed()).then(() => setIsLoading(false));
   }, [dispatch]);
 
   useEffect(() => {
     recentlyViewed.forEach((coin) => {
-      if (!coinDetails[coin.id]) {
+      if (!coinDetails[coin.id] || Date.now() - coinDetails[coin.id].lastUpdated > 60000) {
         dispatch(fetchCoinDetails(coin.id));
       }
     });
@@ -57,41 +57,55 @@ const RecentlyViewed = () => {
 
   const displayedCoins = showAll ? recentlyViewed : recentlyViewed.slice(0, 5);
 
+  const formatPrice = (value) => {
+    if (value === undefined || value === null) return 'N/A';
+    return '$' + value.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+  const formatPercentage = (value) => {
+    if (value === undefined || value === null) return 'N/A';
+    return value.toFixed(2) + '%';
+  };
+
+  const handleDragStart = (e, coin) => {
+    console.log(coin)
+    e.dataTransfer.setData('text/plain', JSON.stringify(coin));
+  };
+
   return (
     <div className={`theme-transition p-3 text-xs border-[2px] rounded-lg ${isDarkMode ? "text-white border-gray-600 bg-gray-950" : "text-black bg-gray-100 border-gray-400"}`}>
-      <h2 className="text-xl font-bold mb-4 text-center md:text-left">Recently Viewed</h2>
+      <h2 className="md:text-xl text-lg font-bold mb-4 text-center md:text-left">Recently Viewed</h2>
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="text-gray-500 uppercase leading-normal border-b-[1px] border-gray-800">
-              <th className="py-2 px-3 text-left">Token</th>
-              <th className="py-2 px-3 text-right">Rank</th>
-              <th className="py-2 px-3 text-right">Genesis Date</th>
-              <th className="py-2 px-3 text-right">Current Price</th>
-              {/* <th className="py-2 px-3 text-right">Actions</th> */}
+          <tr className="text-gray-500 uppercase leading-normal border-b-[1px] border-gray-800">
+              <th className="py-2 md:px-3 px-6 text-left">Token</th>
+              <th className="py-2 px-3 text-right">Last Price</th>
+              <th className="py-2 px-3 text-right">24h Change</th>
+              <th className="py-2 px-3 text-right">Market Cap</th>
             </tr>
           </thead>
           <tbody className="text-gray-500 font-light">
             {displayedCoins.map((coin) => {
               const currentData = coinDetails[coin.id];
               return (
-                <tr key={coin.id} onClick={() => handleClick(coin.id)} className={` ${isDarkMode ? "hover:bg-gray-900" : "hover:bg-gray-200"} cursor-pointer`}>
+                <tr key={coin.id} draggable onDragStart={(e) => handleDragStart(e, currentData)} onClick={() => handleClick(coin.id)} className={`${isDarkMode ? "hover:bg-gray-900" : "hover:bg-gray-200"} cursor-pointer`}>
                   <td className="py-2 px-3 text-left whitespace-nowrap">
                     <div className="flex items-center group">
-                      <img className="w-6 h-6 rounded-full mr-2" src={coin.image} alt={coin.name} />
-                      <span className="font-medium text-blue-400 group-hover:text-blue-300">
+                      <Image height={1000} width={1000} className="w-6 h-6 rounded-full mr-2" src={coin.image} alt={coin.name} />
+                      <span className="font-medium text-blue-500 group-hover:text-blue-400">
                         {coin.symbol.toUpperCase()}
                       </span>
                     </div>
                   </td>
                   <td className="py-2 px-3 text-right">
-                    {coin.market_cap_rank}
+                    {currentData ? formatPrice(currentData.market_data.current_price.usd) : 'Loading...'}
+                  </td>
+                  <td className={`py-2 px-3 text-right ${currentData && currentData.market_data.price_change_percentage_24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                    {currentData ? formatPercentage(currentData.market_data.price_change_percentage_24h) : 'Loading...'}
                   </td>
                   <td className="py-2 px-3 text-right">
-                    {coin.genesis_date || 'N/A'}
-                  </td>
-                  <td className="py-2 px-3 text-right">
-                    {currentData ? `$${currentData.market_data.current_price.usd.toLocaleString()}` : 'Loading...'}
+                    {currentData ? formatPrice(currentData.market_data.market_cap.usd) : 'Loading...'}
                   </td>
                   <td className='py-2 text-right'>
                     <button
@@ -106,7 +120,7 @@ const RecentlyViewed = () => {
             })}
           </tbody>
         </table>
-        {displayedCoins.length > 5 && (
+        {recentlyViewed.length > 5 && (
           <div
             onClick={() => setShowAll(!showAll)}
             className={`w-full text-center mt-2 font-bold py-1.5 px-2 rounded text-xs cursor-pointer theme-transition ${isDarkMode ? "text-white bg-gray-900" : "text-black bg-gray-200"}`}

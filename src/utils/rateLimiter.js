@@ -25,4 +25,4 @@ class RateLimiter {
   }
 }
 
-export const apiLimiter = new RateLimiter(30, 60000); // 30 requests per minute
+export const apiLimiter = new RateLimiter(30, 60000);

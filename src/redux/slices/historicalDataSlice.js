@@ -1,15 +1,12 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import { fetchWithCache } from '@/lib/api';
 
-const API_URL = 'https://api.coingecko.com/api/v3';
-
-// Async thunk to fetch historical data
 export const fetchHistoricalData = createAsyncThunk(
   'historicalData/fetchHistoricalData',
   async ({ coins, days }, { rejectWithValue }) => {
     try {
       const promises = coins.map((coin) =>
-        fetchWithCache(`${API_URL}/coins/${coin}/market_chart`, {
+        fetchWithCache(`coins/${coin}/market_chart`, {
           vs_currency: 'usd',
           days: days,
         })
@@ -35,7 +32,13 @@ const historicalDataSlice = createSlice({
     status: 'idle',
     error: null,
   },
-  reducers: {},
+  reducers: {
+    resetHistoricalData: (state) => {
+      state.data = [];
+      state.status = 'idle';
+      state.error = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchHistoricalData.pending, (state) => {
@@ -51,5 +54,5 @@ const historicalDataSlice = createSlice({
       });
   },
 });
-
+export const { resetHistoricalData } = historicalDataSlice.actions;
 export default historicalDataSlice.reducer;

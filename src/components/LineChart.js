@@ -2,27 +2,17 @@
 
 import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchHistoricalData } from '../redux/slices/historicalDataSlice';
 import { Chart, LineController, LineElement, PointElement, LinearScale, TimeScale, Title, Tooltip, Legend, CategoryScale } from 'chart.js';
 import 'chartjs-adapter-date-fns';
 
 Chart.register(LineController, LineElement, PointElement, LinearScale, TimeScale, Title, Tooltip, Legend, CategoryScale);
 
 const LineChart = () => {
-  const dispatch = useDispatch();
   const isDarkMode = useSelector((state) => state.theme.isDarkMode)
   const { data, status, error } = useSelector((state) => state.historicalData);
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const [timeRange, setTimeRange] = useState('30d');
-
-  useEffect(() => {
-    if (status === 'idle') {
-      const coins = ['bitcoin', 'ethereum', 'binancecoin', 'cardano'];
-      const days = '30';
-      dispatch(fetchHistoricalData({ coins, days }));
-    }
-  }, [status, dispatch]);
 
   const filterDataByTimeRange = (data, range) => {
     const now = new Date();
@@ -78,7 +68,7 @@ const LineChart = () => {
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          color: textColor, // Set default text color
+          color: textColor,
           scales: {
             x: {
               type: 'time',
@@ -160,16 +150,16 @@ const LineChart = () => {
   };
 
   if (status === 'loading') {
-    return <div>Loading chart...</div>;
+    return <div className='text-center w-full'>Loading chart...</div>;
   }
 
   if (status === 'failed') {
-    return <div>Error loading chart: {error}</div>;
+    return <div className='text-center w-full'>Error loading chart: {error}</div>;
   }
 
   return (
     <div className='w-full'>
-      <div className="relative w-full min-h-[400px]"> {/* Ensure container height for responsiveness */}
+      <div className="relative w-full min-h-[400px]">
         <canvas ref={chartRef} />
       </div>
       <div className={`theme-transition ${isDarkMode ? "text-white" : "text-black"} flex flex-col md:flex-row justify-center gap-2 text-xs py-2`}>

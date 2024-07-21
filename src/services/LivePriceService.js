@@ -1,4 +1,3 @@
-// services/LivePriceService.js
 import PubSub from './PubSub';
 
 class LivePriceService {
@@ -11,13 +10,13 @@ class LivePriceService {
     this.prices[coinId] = initialPrice;
     
     const updatePrice = () => {
-      const changePercent = (Math.random() - 0.5) * 0.02; // Random change between -1% and 1%
+      const changePercent = (Math.random() - 0.5) * 0.02;
       this.prices[coinId] *= (1 + changePercent);
       PubSub.publish('priceUpdate', { coinId, price: this.prices[coinId] });
     };
 
     updatePrice(); // Initial update
-    this.intervals[coinId] = setInterval(updatePrice, 60000); // Update every minute
+    this.intervals[coinId] = setInterval(updatePrice, 60000);
   }
 
   stopUpdates(coinId) {

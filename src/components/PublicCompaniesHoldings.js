@@ -30,7 +30,7 @@ const PublicCompaniesHoldings = ({ companies }) => {
         <tbody>
           {companies.map(company => (
             <tr key={company.name}>
-              <td className='text-left py-2 uppercase text-blue-400'>{company.name}</td>
+              <td className='text-left py-2 uppercase text-blue-500'>{company.name}</td>
               <td className="text-right py-2 text-gray-500">{company.bitcoin}</td>
               <td className="text-right py-2 text-gray-500">{company.ethereum}</td>
             </tr>

@@ -1,5 +1,4 @@
 'use client';
-
 import React, { useEffect, useRef } from 'react';
 import { Chart, BarController, BarElement, CategoryScale, LinearScale, Title, Tooltip, Legend } from 'chart.js';
 
@@ -113,7 +112,7 @@ const CoinBarChart = ({isDarkMode, coinData }) => {
     };
   }, [coinData, isDarkMode]);
 
-  return <div className="relative w-full min-h-[400px]"> {/* Ensure container height for responsiveness */}
+  return <div className="relative w-full min-h-[400px] pt-2">
         <canvas ref={barChartRef} />
       </div>;
 };
