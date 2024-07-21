@@ -154,7 +154,7 @@ const LineChart = () => {
   };
 
   if (status === 'loading') {
-    return <div className='text-center text-sm font-semibold w-full'><p className='mb-2'>LOADING CHART...</p><CircularProgress/></div>;
+    return <div className='text-center text-sm font-semibold w-full'><p className='mb-2'>LOADING GRPAH...</p><CircularProgress/></div>;
   }
 
   if (status === 'failed') {
