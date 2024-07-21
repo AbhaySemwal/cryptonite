@@ -47,5 +47,4 @@ This project uses the CoinGecko API. Please note the following:
 - Error handling: For connectivity issues or data fetch errors, appropriate fallback content is shown.
   
 ## Contact
--Email: shbhtsemwal@gmail.com
--LinkedIn: https://www.linkedin.com/in/abhay-semwal-5092a0226/
+Email: shbhtsemwal@gmail.com
