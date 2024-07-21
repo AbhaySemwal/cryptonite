@@ -1,50 +1,73 @@
 # Cryptonite - Cryptocurrency Tracker
 
 ## Overview
-Cryptonite is a web application for tracking cryptocurrencies, providing real-time updates, detailed information, and market trends.
+Cryptonite is a robust web application designed for real-time cryptocurrency tracking, offering comprehensive market insights and detailed token information.
 
-## Features
-- Global Market Cap Chart
-- Public Companies Holdings Information
-- Paginated Cryptocurrency List
-- Detailed Product Pages for Individual Cryptocurrencies
-- Dynamic Theme Switching (Light/Dark Mode)
-- Search Bar with Recent Suggestions
-- Mock Live Price Ticker
-- Draggable Watchlist
+## Key Features
+- Interactive Global Market Cap Chart
+- Public Companies' Cryptocurrency Holdings Overview
+- Paginated Cryptocurrency List with Advanced Filtering
+- In-depth Individual Cryptocurrency Pages
+- Seamless Dynamic Theme Switching (Light/Dark Mode)
+- Intelligent Search Bar with Recent Suggestions
+- Real-time Price Ticker Simulation
+- User-friendly Draggable Watchlist
 
-## Technologies Used
-- Frontend Framework: Next.js
+## Tech Stack
+- Frontend: Next.js
 - Styling: Tailwind CSS
-- State Management: [Redux Toolkit]
-- Charts: [Chart.js]
+- State Management: Redux Toolkit
+- Data Visualization: Chart.js
 - API: CoinGecko
 
-## Installation and Setup
-1. Clone the repository
-2. Navigate to the project directory
-3. Install dependencies
-4. Create a `.env.local` file in the root directory and add your API key
+## Getting Started
 
-## Usage
+### Prerequisites
+- Node.js (v14.0.0 or later)
+- npm (v6.0.0 or later)
 
-Main Features
-Add to Watchlist: Drag and drop cryptocurrency tokens into the watchlist section to track their price and other details.
-View Coin Details: Click on a token in the watchlist to navigate to its detailed view, where you can see more in-depth information about the coin.
-Remove from Watchlist: Click the delete icon next to a token to remove it from your watchlist.
-Toggle Dark Mode: The application supports dark mode and light mode. Toggle between these modes based on your preference.
+### Installation
+1. Clone the repository: git clone https://github.com/AbhaySemwal/cryptonite.git
+2. Navigate to the project directory: cd cryptonite
+3. Install dependencies: npm i
+4. Set up environment variables:
+Create a `.env.local` file in the root directory and add your API key: COINGECKO_API_KEY=your_api_key_here
 
-How to Use
-Adding Tokens:Drag a token from a supported source or use the search feature (if available) to add it to your watchlist.
-Viewing Details:Click on a token in the watchlist to view its detailed information, including price, market cap, and description.
-Removing Tokens:Click on the delete icon next to a token in the watchlist to remove it.
-Managing Theme:Toggle the dark mode switch to change the appearance of the application.
 
-## API Information
-This project uses the CoinGecko API. Please note the following:
-- API documentation: https://docs.coingecko.com/v3.0.1/reference/introduction
-- Rate limits: The API allows up to 30 calls per minute. Exceeding this limit may result in temporary blocking of API requests.
-- Error handling: For connectivity issues or data fetch errors, appropriate fallback content is shown.
-  
+### Running the Application
+1. Start the development server: npm run dev
+2. Open `http://localhost:3000` in your browser
+
+## Usage Guide
+
+### Core Functionality
+- **Watchlist Management**: 
+- Add: Drag and drop tokens to the watchlist
+- Remove: Click the delete icon next to a token
+- View Details: Click on a token for in-depth information
+- **Theme Toggle**: Switch between light and dark modes for optimal viewing
+
+### Navigation
+- Use the search bar for quick token lookup
+- Explore the paginated list for a comprehensive view of available cryptocurrencies
+- Click on individual tokens for detailed analysis and historical data
+
+## API Integration
+
+This project leverages the CoinGecko API:
+
+- **Documentation**: [CoinGecko API Docs](https://docs.coingecko.com/v3.0.1/reference/introduction)
+- **Rate Limiting**: 30 calls per minute
+- **Error Handling**: Fallback content displayed for API or connectivity issues
+
+## Future Enhancements
+- Price alerts and notifications
+- Integration with additional data sources
+- Mobile app development
+
 ## Contact
-Email: shbhtsemwal@gmail.com
+Abhay Semwal - shbhtsemwal@gmail.com
+
+Project Link: [https://github.com/AbhaySemwal/cryptonite](https://github.com/AbhaySemwal/cryptonite)
+
+For any queries or feedback, please don't hesitate to reach out.
