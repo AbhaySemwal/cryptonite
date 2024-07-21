@@ -154,11 +154,11 @@ const LineChart = () => {
   };
 
   if (status === 'loading') {
-    return <div className='text-center text-sm font-semibold w-full'><p className='mb-2'>LOADING GRPAH...</p><CircularProgress/></div>;
+    return <div className='text-center text-sm font-semibold w-full'><p className='mb-2'>LOADING GRAPH...</p><CircularProgress/></div>;
   }
 
   if (status === 'failed') {
-    return <div className='text-center text-sm font-semibold w-full'><p className='mb-2'>Error loading chart, Please try again</p><div className='cursor-pointer' onClick={()=>{window.location.reload()}}><Replay/></div></div>;
+    return <div className='text-center text-sm font-semibold w-full'><p className='mb-2'>Error loading graph, Please try again</p><div className='cursor-pointer' onClick={()=>{window.location.reload()}}><Replay/></div></div>;
   }
 
   return (
