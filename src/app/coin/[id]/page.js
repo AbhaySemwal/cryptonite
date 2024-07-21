@@ -170,7 +170,7 @@ const CoinPage = () => {
           {coinData.description.en.length > 300 && (
             <button 
               onClick={() => setShowFullDescription(!showFullDescription)}
-              className="mt-1 text-gray-500 hover:text-gray-600 transition-colors duration-200"
+              className="mt-1 text-gray-500 hover:text-gray-400 transition-colors duration-200"
             >
               {showFullDescription ? 'Read Less' : 'Read More'}
             </button>

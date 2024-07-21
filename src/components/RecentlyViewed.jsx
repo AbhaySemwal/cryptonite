@@ -101,7 +101,7 @@ const RecentlyViewed = () => {
                   <td className="py-2 px-3 text-right">
                     {currentData ? formatPrice(currentData.market_data.current_price.usd) : 'Loading...'}
                   </td>
-                  <td className={`py-2 px-3 text-right ${currentData && currentData.market_data.price_change_percentage_24h >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  <td className={`py-2 px-3 text-right ${currentData && currentData.market_data.price_change_percentage_24h < 0 ? 'text-red-500' : 'text-green-500'}`}>
                     {currentData ? formatPercentage(currentData.market_data.price_change_percentage_24h) : 'Loading...'}
                   </td>
                   <td className="py-2 px-3 text-right">
