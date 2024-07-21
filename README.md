@@ -42,10 +42,10 @@ Managing Theme:Toggle the dark mode switch to change the appearance of the appli
 
 ## API Information
 This project uses the CoinGecko API. Please note the following:
-- API documentation: [Link to CoinGecko API docs]
+- API documentation: https://docs.coingecko.com/v3.0.1/reference/introduction
 - Rate limits: The API allows up to 30 calls per minute. Exceeding this limit may result in temporary blocking of API requests.
 - Error handling: For connectivity issues or data fetch errors, appropriate fallback content is shown.
   
 ## Contact
-Email: shbhtsemwal@gmail.com
-LinkedIn: https://www.linkedin.com/in/abhay-semwal-5092a0226/
+-Email: shbhtsemwal@gmail.com
+-LinkedIn: https://www.linkedin.com/in/abhay-semwal-5092a0226/
