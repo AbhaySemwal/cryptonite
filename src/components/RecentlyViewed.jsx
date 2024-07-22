@@ -68,7 +68,6 @@ const RecentlyViewed = () => {
   };
 
   const handleDragStart = (e, coin) => {
-    console.log(coin)
     e.dataTransfer.setData('text/plain', JSON.stringify(coin));
   };
 

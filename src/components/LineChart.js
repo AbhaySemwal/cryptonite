@@ -16,8 +16,6 @@ const LineChart = () => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const [timeRange, setTimeRange] = useState('30d');
-  const router=useRouter()
-
   const filterDataByTimeRange = (data, range) => {
     const now = new Date();
     const pastDate = new Date(now.getTime());
