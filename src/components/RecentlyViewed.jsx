@@ -119,6 +119,7 @@ const RecentlyViewed = () => {
             })}
           </tbody>
         </table>
+      </div>
         {recentlyViewed.length > 5 && (
           <div
             onClick={() => setShowAll(!showAll)}
@@ -127,7 +128,6 @@ const RecentlyViewed = () => {
             {showAll ? 'Show Less' : 'View More'}
           </div>
         )}
-      </div>
     </div>
   );
 };
